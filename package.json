@@ -2,6 +2,19 @@
   "name": "liveinput",
   "version": "1.0.0",
   "description": "Input text auto changer",
+  "homepage": "https://github.com/vahpetr/liveinput/",
+  "keywords": [
+    "input"
+  ],
+  "author": "Vasilev Pyotr",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vahpetr/liveinput.git"
+  },
+  "licenses": [{
+    "type": "Apache-2.0",
+    "url": "http://www.apache.org/licenses/LICENSE-2.0"
+  }],
   "main": "dist/liveinput.js",
   "scripts": {
     "install": [
@@ -9,8 +22,6 @@
     ],
     "test": "phantomjs tests/liveinput.copypaste.spec.js index.html && karma start"
   },
-  "author": "Vasilev Pyotr",
-  "license": "ISC",
   "devDependencies": {
     "del": "^1.1.1",
     "gulp": "^3.8.11",
