@@ -17,9 +17,7 @@
   }],
   "main": "dist/liveinput.js",
   "scripts": {
-    "install": [
-      "npm install"
-    ],
+    "install": "npm install && gulp",
     "test": "phantomjs tests/liveinput.copypaste.spec.js index.html && karma start"
   },
   "devDependencies": {

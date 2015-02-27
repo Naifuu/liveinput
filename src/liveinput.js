@@ -1281,7 +1281,7 @@ var liveinput = new function () {
 		return self;
 	};
 
-	var setlang = function(config) {
+	var setLang = function(config) {
 		if (typeof config.lang == 'undefined') return;
 		var lang = config.lang;
 		//delete config.lang;
@@ -1294,11 +1294,11 @@ var liveinput = new function () {
 			config[p].lang = lang;
 		}
 	};
-	var mergeconfig = function(a, b) {
+	var mergeConfig = function(a, b) {
 		// ReSharper disable once MissingHasOwnPropertyInForeach
 		for (var p in b) {
 			if (typeof a[p] == 'object') {
-				a[p] = mergeconfig(a[p], b[p]);
+				a[p] = mergeConfig(a[p], b[p]);
 			} else { // if(a[p] === true) 
 				a[p] = b[p];
 			}
@@ -1317,16 +1317,16 @@ var liveinput = new function () {
 		return types[name](options);
 	};
 	var configuration = function (config) {
-		mergeconfig(types, config);
+		mergeConfig(types, config);
 	};
 
 	var types = {
 		'default': function (options) {
 			//var special = ' `-=~!@#$%^&*()_+;\'\,./:"|<>?';//{}[]
-			var config = mergeconfig({
+			var config = mergeConfig({
 				//язык ru/en
 				lang: '',
-				interval: 1,//700,
+				interval: 700,//1,
 				//отвечает за перевод одного языка в другой
 				layout: true,
 				//отвечает за разрешённые символы
@@ -1397,12 +1397,12 @@ var liveinput = new function () {
 					}
 				}
 			}, options);
-			setlang(config);
+			setLang(config);
 			return new LiveInput(config);
 		},
 		'fio': function (options) {
 			var special = ' \'-';
-			var config = mergeconfig({
+			var config = mergeConfig({
 				lang: 'ru',
 				include: {
 					numbers: false,
@@ -1422,7 +1422,7 @@ var liveinput = new function () {
 			return init(config);
 		},
 		'numeric': function (options) {
-			var config = mergeconfig({
+			var config = mergeConfig({
 				include: {
 					chars: false,
 					numbers: true,
@@ -1434,7 +1434,7 @@ var liveinput = new function () {
 		},
 		'place': function (options) {
 			var special = '. \'-';
-			var config = mergeconfig({
+			var config = mergeConfig({
 				lang: 'ru',
 				include: {
 					numbers: false,
@@ -1454,7 +1454,7 @@ var liveinput = new function () {
 			return init(config);
 		},
 		'peopled-place': function (options) {
-			var config = mergeconfig({
+			var config = mergeConfig({
 				include: {
 					numbers: true
 				}
@@ -1463,7 +1463,7 @@ var liveinput = new function () {
 		},
 		'address': function (options) {
 			var special = '-/';
-			var config = mergeconfig({
+			var config = mergeConfig({
 				include: {
 					symbols: false,
 					special: special
@@ -1484,7 +1484,7 @@ var liveinput = new function () {
 			return init(config);
 		},
 		'month': function (options) {
-			var config = mergeconfig({
+			var config = mergeConfig({
 				lang: 'ru',
 				include: {
 					numbers: true,
@@ -1504,7 +1504,7 @@ var liveinput = new function () {
 		},
 		'passport-issue': function (options) {
 			var special = '. -"№';
-			var config = mergeconfig({
+			var config = mergeConfig({
 				lang: 'ru',
 				include: {
 					numbers: false,
@@ -1527,7 +1527,7 @@ var liveinput = new function () {
 		},
 		'international-passport-issue': function (options) {
 			var special = ' -';
-			var config = mergeconfig({
+			var config = mergeConfig({
 				lang: '',
 				include: {
 					numbers: false,
@@ -1549,7 +1549,7 @@ var liveinput = new function () {
 			return init(config);
 		},
 		'international-document-serial': function (options) {
-			var config = mergeconfig({
+			var config = mergeConfig({
 				lang: '',
 				include: {
 					numbers: true,
@@ -1560,7 +1560,7 @@ var liveinput = new function () {
 		},
 		'document-issue': function (options) {
 			var special = ' .,-/"()№\'';
-			var config = mergeconfig({
+			var config = mergeConfig({
 				lang: 'ru',
 				include: {
 					numbers: true,
