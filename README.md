@@ -15,6 +15,9 @@ instance.on('change', name, function (current, last, lang) {
 	name.value = current;
 });
 
+instance.unbind(surname);
+instance.unbind(name);
+
 //month
 var instance = liveinput.init('month', { lang: 'en' });
 var month = document.getElementById('month');
@@ -29,6 +32,8 @@ var validator = function (current, last, lang) {
 instance.on('change', month, function (current, last, lang) {
 	el.value = validator(current, last, lang);
 });
+
+instance.unbind(month);
 ```
 
 License
