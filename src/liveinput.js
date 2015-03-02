@@ -1244,8 +1244,9 @@ var liveinput = new function () {
 			helper.addEvent(el, 'blur', ptr.blur);
 
 			el.focus();
+			return self;
 		}
-		self.unbind = function (el) {
+		self.unbind = function(el) {
 			var ptr = heap[el.GUID];
 
 			helper.removeEvent(el, 'keydown', ptr.keydown);
@@ -1259,25 +1260,28 @@ var liveinput = new function () {
 			delete heap[el.GUID];
 			delete ptr;
 			delete el.GUID;
-		}
-		self.on = function (event, el, cb) {
+			return self;
+		};
+		self.on = function(event, el, cb) {
 			heap[el.GUID].events[event] = heap[el.GUID].events[event] || [];
 			heap[el.GUID].events[event].push(cb);
 
 			switch (event) {
 			case 'change':
-				if(el.value.length)
+				if (el.value.length)
 					refresh(el);
 				break;
 			default:
 				break;
 			}
-		}
-		self.off = function (event, el, cb) {
+			return self;
+		};
+		self.off = function(event, el, cb) {
 			eventindex = helper.indexOf(heap[el.GUID].events[event], cb);
-			if (eventindex == -1) return;
+			if (eventindex == -1) return self;
 			heap[el.GUID].events[event].splice(eventindex, 1);
-		}
+			return self;
+		};
 		return self;
 	};
 
