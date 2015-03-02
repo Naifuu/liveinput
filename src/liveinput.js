@@ -11,29 +11,29 @@ var liveinput = new function () {
 					return func.apply(thisArg, args.concat(slice.call(arguments)));
 				}
 			};
-			var visitor = function (thisArg) {
+			var extrude = function (thisArg) {
 				return bind(Function.prototype.call, thisArg);
 			}
-			var filter = Array.prototype.filter ? visitor(Array.prototype.filter) : function (arr, cb) {
+			var filter = Array.prototype.filter ? extrude(Array.prototype.filter) : function (arr, cb) {
 				var res = [], i, l;
 				for (i = 0, l = arr.length; i < l; i++) {
 					if (cb(arr[i], i, arr)) res.push(arr[i]);
 				}
 				return res;
 			};
-			var map = Array.prototype.map ? visitor(Array.prototype.map) : function (arr, cb) {
+			var map = Array.prototype.map ? extrude(Array.prototype.map) : function (arr, cb) {
 				var res = [], i, l;
 				for (i = 0, l = arr.length; i < l; i++) {
 					res.push(cb(arr[i], i, arr));
 				}
 				return res;
 			}
-			var forEach = Array.prototype.forEach ? visitor(Array.prototype.forEach) : function (arr, cb) {
+			var forEach = Array.prototype.forEach ? extrude(Array.prototype.forEach) : function (arr, cb) {
 				for (var i = 0, l = arr.length; i < l; i++) {
 					cb(arr[i], i, arr);
 				}
 			};
-			var indexOf = Array.prototype.indexOf ? visitor(Array.prototype.indexOf) : function (arr, v) {
+			var indexOf = Array.prototype.indexOf ? extrude(Array.prototype.indexOf) : function (arr, v) {
 				var  i, l;
 				for (i = 0, l = arr.length; i < l; i++) {
 					if (arr[i] == v) return i;
