@@ -1295,6 +1295,7 @@ var liveinput = new function () {
 		}
 	};
 	var mergeConfig = function(a, b) {
+		if(!b) return a;
 		// ReSharper disable once MissingHasOwnPropertyInForeach
 		for (var p in b) {
 			if (typeof a[p] == 'object') {
