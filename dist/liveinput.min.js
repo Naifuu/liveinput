@@ -1,6 +1,6 @@
 /**
  * liveinput - Input text auto changer
- * @version v1.0.0
+ * @version v1.0.2
  * @link https://github.com/vahpetr/liveinput/
  * @license Apache-2.0
  */
