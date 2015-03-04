@@ -1,0 +1,14 @@
+{
+  "name": "liveinput",
+  "main":[
+	  "dist/liveinput.js",
+	  "dist/liveinput.min.js",
+	  "dist/liveinput.min.js.gz",
+	  "dist/liveinput.min.js.map"
+  ],
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "homepage": "https://github.com/vahpetr/liveinput"
+}
