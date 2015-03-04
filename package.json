@@ -14,7 +14,7 @@
   "license": "Apache-2.0",
   "main": "dist/liveinput.js",
   "scripts": {
-    "install": "npm install",
+    "install": "npm install && gulp",
     "build": "gulp",
     "test": "karma start",
     "copypast-test": "phantomjs tests/liveinput.copypaste.spec.js index.html"
