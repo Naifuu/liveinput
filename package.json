@@ -1,20 +1,23 @@
 {
   "name": "liveinput",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Input text auto changer",
-  "homepage": "https://github.com/vahpetr/liveinput/",
-  "keywords": [
-    "input"
-  ],
   "author": "Vasilev Pyotr",
+  "homepage": "https://github.com/vahpetr/liveinput/",
+  "main": "dist/liveinput.js",
+  "keywords": [
+    "input",
+	"auto change"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/vahpetr/liveinput.git"
   },
-  "license": "Apache-2.0",
-  "main": "dist/liveinput.js",
+  "bugs": {
+    "url": "https://github.com/vahpetr/liveinput/issues"
+  },
   "scripts": {
-    "install": "npm install && gulp",
+    "install": "npm install",
     "build": "gulp",
     "test": "karma start",
     "copypast-test": "phantomjs tests/liveinput.copypaste.spec.js index.html"
@@ -35,5 +38,6 @@
     "karma-chrome-launcher": "^0.1.7",
     "karma-jasmine": "^0.3.5",
     "phantomjs": "^1.9.15"
-  }
+  },
+  "license": "Apache-2.0"
 }
