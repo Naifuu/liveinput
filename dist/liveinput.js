@@ -1,2 +1,1098 @@
-var liveinput=new function(){var e=function(){return new function(){var e=Math.random,r=Function.prototype.bind?function(e,r){return e.bind(r)}:function(e,r){var t=Array.prototype.slice,n=t.call(arguments,2);return function(){return e.apply(r,n.concat(t.call(arguments)))}},t=function(e){return r(Function.prototype.call,e)},n=Array.prototype.filter?t(Array.prototype.filter):function(e,r){var t,n,o=[];for(t=0,n=e.length;n>t;t++)r(e[t],t,e)&&o.push(e[t]);return o},o=Array.prototype.map?t(Array.prototype.map):function(e,r){var t,n,o=[];for(t=0,n=e.length;n>t;t++)o.push(r(e[t],t,e));return o},a=Array.prototype.forEach?t(Array.prototype.forEach):function(e,r){for(var t=0,n=e.length;n>t;t++)r(e[t],t,e)},u=Array.prototype.indexOf?t(Array.prototype.indexOf):function(e,r){var t,n;for(t=0,n=e.length;n>t;t++)if(e[t]==r)return t;return-1},f=function(e,r){return n(e,function(e){return-1==u(r,e)})},c=function(e){return e.charCodeAt()},i=function(e){return o(e.split(""),c)},s=function(e){return String.fromCharCode.apply(void 0,e)},l=function(e,r,t){return e.addEventListener?e.addEventListener(r,t,!0):e.attachEvent("on"+r,t)},p=function(e,r,t){return e.removeEventListener?e.removeEventListener(r,t,!0):e.detachEvent("on"+r,t)},h=function(){return(16*e()|0).toString(16)},d=function(){return"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx".replace(/x/g,h)},v=function(e,r){for(var t=0,n=r.length;n>t;t++)e=e.replace(new RegExp("\\{"+t+"\\}","g"),r[t]);return e},g=function(e,r){for(var t=[],n=0;e>n;n++)t.push(r(n,e,t));return t},m=function(e){if(e.createTextRange){var r=document.selection.createRange().duplicate();return r.moveEnd("character",e.value.length),""==r.text?e.value.length:e.value.lastIndexOf(r.text)}return e.selectionStart},y=function(e){if(e.createTextRange){var r=document.selection.createRange().duplicate();return r.moveStart("character",-e.value.length),r.text.length}return e.selectionEnd},x=function(e,r){if(e.setSelectionRange)return e.setSelectionRange(r.start,r.end);if(e.createTextRange){var t=e.createTextRange();t.collapse(!0),t.moveStart("character",r.start),t.moveEnd("character",r.end),t.select()}},b=function(e){var r=[];for(var t in e)e.hasOwnProperty(t)&&r.push(t);return r},w=Array.isArray||function(e){return"[object Array]"===Object.prototype.toString.call(e)};return{charToCode:c,textToCodes:i,codesToText:s,addEvent:l,removeEvent:p,GUID:d,format:v,fill:g,getSelectionStart:m,getSelectionEnd:y,setCaretPosition:x,getOwnPropertyNames:b,bind:r,filter:n,map:o,forEach:a,except:f,indexOf:u,isArray:w}}}(),r=function(r){var t=this,n=Math.max;t.start=0,t.end=0,t.press=function(){t.end=t.start=e.getSelectionStart(r)},t.release=function(){t.end=e.getSelectionEnd(r)},t.change=function(){t.start=e.getSelectionStart(r),t.end=e.getSelectionEnd(r)};var o;return t.move=function(a){o=n(t.start-a,t.end-a),e.setCaretPosition(r,{start:o,end:o}),t.press()},t.refresh=function(){e.setCaretPosition(r,{start:0,end:r.value.length}),t.change()},t},t=["ru","en"],n=[192,49,50,51,52,53,54,55,56,57,48,189,187,81,87,69,82,84,89,85,73,79,80,219,221,65,83,68,70,71,72,74,75,76,186,222,220,226,90,88,67,86,66,78,77,188,190,191,111,106,109,107,12],o={keyCodes:[32,13],charCodes:[32,10]};n.push.apply(n,o.keyCodes);var a={control:{50:"@",51:"#",52:"$",53:"%",54:"^",55:"&",222:"'"}},u=function(e){return parseInt(e,10)},f=function(r){var t=e.getOwnPropertyNames(r);return e.map(t,u)},c={control:f(a.control)},i={};i.layout=function(r,n){var a=this;a.type=n;var u=r.lang,f={ru:[1105,1081,1094,1091,1082,1077,1085,1075,1096,1097,1079,1092,1099,1074,1072,1087,1088,1086,1083,1076,1103,1095,1089,1084,1080,1090,1100,1025,1049,1062,1059,1050,1045,1053,1043,1064,1065,1047,1060,1067,1042,1040,1055,1056,1054,1051,1044,1071,1063,1057,1052,1048,1058,1068,1093,1098,92,49,51,53,56,57,48,45,61,1061,1066,47,33,8470,37,42,40,41,95,43],en:[96,113,119,101,114,116,121,117,105,111,112,97,115,100,102,103,104,106,107,108,122,120,99,118,98,110,109,126,81,87,69,82,84,89,85,73,79,80,65,83,68,70,71,72,74,75,76,90,88,67,86,66,78,77,91,93,92,49,51,53,56,57,48,45,61,123,125,124,33,35,37,42,40,41,95,43]};for(var c in f)f[c].push.apply(f[c],o.charCodes);var i,s,l,p={50:[[50,34],[50,64]],52:[[52,59],[52,36]],54:[[54,58],[54,94]],55:[[55,63],[55,38]],186:[[1078,1046],[59,58]],222:[[1101,1069],[39,34]],188:[[1073,1041],[44,60]],190:[[1102,1070],[46,62]],191:[[46,44],[47,63]]},h={50:64,51:35,52:36,53:37,54:94,222:39},d={};for(i in p)d[i]={};for(s=0,l=t.length;l>s;s++)for(i in p)d[i][t[s]]=p[i][s];var v,g,m,y,x,b,w=u?e.except(t,[u]):t,k=w.length;return a.exec=function(r,t){if(!t.keydown.length)return r;g=r.diff,b=g.length;var n=[];for(s=0,l=g.length;l>s;s++)if(m=g[s],x=!1,y=e.indexOf(f[u],m),-1==y){for(v=0;k>v;v++)if(y=e.indexOf(f[w[v]],m),-1!=y){n.push(f[u][y]),x=!0;break}if(!x)if(t.keydown[s].ctrlKey&&h[t.keydown[s].keyCode]==m)n.push(m);else{if(!d[t.keydown[s].keyCode])break;if(y=e.indexOf(d[t.keydown[s].keyCode][u],m),-1==y){for(v=0;k>v;v++)if(y=e.indexOf(d[t.keydown[s].keyCode][w[v]],m),-1!=y){n.push(d[t.keydown[s].keyCode][u][y]),x=!0;break}x||t.keydown.splice(s,1)}else n.push(m)}}else n.push(m);return r.diff=n,r.offset+=b-r.diff.length,r},a.get=function(){return{type:n,enabled:r.lang?!0:!1,config:r}},a},i.include=function(r,n){var o=this;o.type=n;var a=r.lang||"",u=[];e.forEach(["numbers","symbols"],function(e){r[e]&&u.push(e)});var f,c,i,s=r.special||"",l=a?[a]:t;for(f=0,c=l.length;c>f;f++)i=e.indexOf(u,l[f]),-1==i&&u.push(l[f]);s=e.textToCodes(s),s.length&&-1==e.indexOf(u,"special")&&u.push("special"),r.chars||e.forEach(t,function(r){i=e.indexOf(u,r),-1!=i&&u.splice(i,1)});var p,h,d,v,g={ru:[1092,1099,1074,1072,1087,1088,1086,1083,1076,1081,1094,1091,1082,1077,1085,1075,1096,1097,1079,1103,1095,1089,1084,1080,1090,1100,1093,1098,1078,1101,1073,1102,1105,1060,1067,1042,1040,1055,1056,1054,1051,1044,1049,1062,1059,1050,1045,1053,1043,1064,1065,1047,1071,1063,1057,1052,1048,1058,1068,1061,1066,1046,1069,1041,1070,1025],en:[97,115,100,102,103,104,106,107,108,113,119,101,114,116,121,117,105,111,112,122,120,99,118,98,110,109,65,83,68,70,71,72,74,75,76,81,87,69,82,84,89,85,73,79,80,90,88,67,86,66,78,77],numbers:[48,49,50,51,52,53,54,55,56,57],symbols:[32,10,96,45,61,126,33,64,35,36,37,94,38,42,40,41,95,43,91,93,59,39,92,44,46,47,123,125,58,34,124,60,62,63,8470],special:s},m=u.length;return o.exec=function(r,t){h=r.diff,d=h.length;var n=[];for(f=0,c=h.length;c>f;f++){for(v=!1,p=0;m>p;p++)if(i=e.indexOf(g[u[p]],h[f]),-1!=i){n.push(h[f]),v=!0;break}v||t.keydown.splice(f,1)}return r.diff=n,r.offset+=d-r.diff.length,r},o.get=function(){return{type:n,enabled:u.length||s.length?!0:!1,config:r}},o},i.exclude=function(r,t){delete r.lang;var n=this;n.type=t;var o=r.special||"";o=e.textToCodes(o);var a,u,f,c,i;return n.exec=function(r){c=r.diff,i=c.length;var t=[];for(a=0,u=c.length;u>a;a++)f=e.indexOf(o,c[a]),-1==f&&t.push(c[a]);return r.diff=t,r.offset+=i-r.diff.length,r},n.get=function(){return{type:t,enabled:o.length?!0:!1,config:r}},n},i.input=function(r,n){var o=this;o.type=n;var a,u,f,c,i,s,l,p,h,d,v=r.lang,g=r.register,m=r.capslock,y={ru:{lower:[1092,1099,1074,1072,1087,1088,1086,1083,1076,1078,1101,1081,1094,1091,1082,1077,1085,1075,1096,1097,1079,1093,1098,1103,1095,1089,1084,1080,1090,1100,1073,1102,1105],upper:[1060,1067,1042,1040,1055,1056,1054,1051,1044,1046,1069,1049,1062,1059,1050,1045,1053,1043,1064,1065,1047,1061,1066,1071,1063,1057,1052,1048,1058,1068,1041,1070,1025]},en:{lower:[97,115,100,102,103,104,106,107,108,113,119,101,114,116,121,117,105,111,112,122,120,99,118,98,110,109],upper:[65,83,68,70,71,72,74,75,76,81,87,69,82,84,89,85,73,79,80,90,88,67,86,66,78,77]}},x=v?[v]:t,b=e.except(e.getOwnPropertyNames(y[x[0]]),[g])[0],w=["register","capslock"],k=x.length,E=w.length,C={};return C.register=function(r){i=r.diff,h=i.length;var t=[];for(a=0,u=i.length;u>a;a++){for(s=!1,f=0;k>f;f++)if(c=e.indexOf(y[x[f]][b],i[a]),-1!=c){t.push(y[x[f]][g][c]),s=!0;break}s||t.push(i[a])}return r.diff=t,r.offset+=h-r.diff.length,r},C.capslock=function(r,t){if(!t.keydown.length)return r;i=r.diff,h=i.length;var n=[];for(a=0,u=i.length;u>a;a++){for(s=!1,l=g||(t.keydown[a].shiftKey?"upper":"lower"),g&&t.keydown[a].shiftKey&&(l="upper"==l?"lower":"upper"),p="upper"==l?"lower":"upper",f=0;k>f;f++)if(c=e.indexOf(y[x[f]][l],i[a]),-1==c&&(c=e.indexOf(y[x[f]][p],i[a]),-1!=c)){n.push(y[x[f]][l][c]),s=!0;break}s||n.push(i[a])}return r.diff=n,r.offset+=h-r.diff.length,r},o.exec=function(e,t){var n=e;for(d=0;E>d;d++)r[w[d]]&&(n=C[w[d]](n,t));return n},o.get=function(){return{type:n,enabled:g||m?!0:!1,config:r}},o},i.regexulator=function(r,t){var n=this;n.type=t,delete r.lang;var o,a,u,f,c={"after-chars-remove-chars":"((?:{0})+)(?:{1})+","after-term-remove-chars":"((?:^|\\s)+{0}\\s+)(?:{1})+","after-chars-remove-term":"((?:{0})+)\\s+{1}\\s+","after-term-remove-term":"((?:^|\\s)+{0}\\s+){1}\\s+","before-chars-remove-chars":"(?:{1})+((?:{0})+)","before-term-remove-chars":"(?:{1})+(\\s+{0}\\s+)","before-chars-remove-term":"(?:^|\\s)+{1}\\s+((?:{0})+)","before-term-remove-term":"(?:^|\\s)+{1}\\s+({0}\\s+)","after-char-remove-repeat":"({0}){1}+","after-char-replace-expr":"({0}{1})","after-term-replace-expr":"(?:^|\\s)+({0}\\s+{1})","after-char-upper-char":"({0}[a-zа-яё])"},i={"[":"\\[","]":"\\]","\\":"\\\\","/":"\\/","^":"\\^",$:"\\$",".":"\\.","|":"\\|","?":"\\?","*":"\\*","+":"\\+","(":"\\(",")":"\\)","{":"\\{","}":"\\}","'":"\\'","":"^"},s={},l={},p=[],h=[],d=function(e){return i[e]||e},v=function(r){var t=r.split("");return t.length||t.push(""),e.map(t,d)},g=function(e){return[v(e).join("|")]},m=function(e){return[v(e).join("")]},y=function(r,t){return e.format(c[r],t)},x={};x["after-chars-remove-chars"]=function(r,t,n){for(var o in r)e.forEach(g(o),function(a){e.forEach(g(r[o]),function(e){s[n].push(y(t,[a,e]))})})},x["after-chars-remove-term"]=function(r,t,n){for(var o in r)e.forEach(g(o),function(a){e.forEach(m(r[o]),function(e){s[n].push(y(t,[a,e]))})})},x["after-term-remove-chars"]=function(r,t,n){for(var o in r)e.forEach(m(o),function(a){e.forEach(g(r[o]),function(e){s[n].push(y(t,[a,e]))})})},x["after-term-remove-term"]=function(r,t,n){for(var o in r)e.forEach(m(o),function(a){e.forEach(m(r[o]),function(e){s[n].push(y(t,[a,e]))})})},x["after-char-remove-repeat"]=function(r,t,n){e.forEach(v(r),function(e){s[n].push(y(t,[e,e]))})},x["before-chars-remove-chars"]=x["after-chars-remove-chars"],x["before-chars-remove-term"]=x["after-chars-remove-term"],x["before-term-remove-chars"]=x["after-term-remove-chars"],x["before-term-remove-term"]=x["after-term-remove-term"],x["after-char-replace-expr"]=function(r,t,n){for(var o in r)e.forEach(v(o),function(e){l[n].push({expr:y(t,[e,r[o].expr]),replacer:r[o].replacer})})},x["after-char-upper-char"]=function(r,t,n){for(var o={},a=e.isArray(r)?r:[r],u=0,f=a.length;f>u;u++)o[a[u]]={expr:"[a-zа-яё]",replacer:function(e,r,t,n,o,a){return n=1==e.length?"":e[0],o.keydown.length&&o.keydown[a].shiftKey?n+e[e.length-1].toLowerCase():n+e[e.length-1].toLocaleUpperCase()}};x["after-char-replace-expr"](o,"after-char-replace-expr",n)},x["after-term-replace-expr"]=function(r,t,n){for(var o in r)e.forEach(m(o),function(e){l[n].push({expr:y(t,[e,r[o].expr]),replacer:r[o].replacer})})};for(var b in r){if(/[^igm]/g.test(b))throw new Error("Command regexulator can not support flag "+b);b=b.split("").sort().join(""),s[b]=s[b]||[],l[b]=l[b]||[],e.forEach(["after-chars-remove-chars","after-term-remove-chars","after-chars-remove-term","after-term-remove-term","before-chars-remove-chars","before-term-remove-chars","before-chars-remove-term","before-term-remove-term","after-char-replace-expr","after-term-replace-expr","after-char-remove-repeat","after-char-upper-char"],function(e){void 0!=r[b][e]&&x[e](r[b][e],e,b)})}for(b in s)s[b].length&&p.push({expr:new RegExp(s[b].join("|"),b),replacer:e.fill(s[b].length,function(e){return"$"+(e+1)}).join("")});var w=function(e){return e.expr};for(b in l)l[b].length&&h.push({expr:new RegExp(e.map(l[b],w).join("|"),b),replacer:l[b][0].replacer});var k,E,C,O,T=function(e){for(k=e[0],C=e[e.length-2],O=e[e.length-1],u=1,f=e.length-2;f>u;u++)if(void 0!=e[u]){E=e[u];break}};return n.exec=function(e,r){for(o=0,a=p.length;a>o;o++)e=e.replace(p[o].expr,p[o].replacer);for(o=0,a=h.length;a>o;o++)e=e.replace(h[o].expr,function(){return T(arguments),r.cursor.start<=C+1&&C+1<=r.cursor.end?(f=r.before.length+r.diff.length-C-k.length,r.keydown[f]||(f=0),h[o].replacer(k,E,C,O,r,f)):k});return e},n.get=function(){return{type:t,enabled:p.length||h.length?!0:!1,config:r}},n};var s=function(r){var t,n,o,a=this,u=[],f=["layout","include","exclude","input"];for(t=0,n=f.length;n>t;t++)r[f[t]]&&(r[f[t]]===!0&&(r[f[t]]={}),u.push(new i[f[t]](r[f[t]],f[t])));for(var c=0;c<u.length;c++)u[c].get().enabled||u.splice(c--,1);return n=u.length,a.pass=function(r,a){for(o=r,t=0;n>t;t++)o=u[t].exec(o,a);return o.before=e.codesToText(o.before),o.diff=e.codesToText(o.diff),o.after=e.codesToText(o.after),o.offset=r.offset,o},a.config=function(){var e,r={};for(t=0;n>t;t++)e=u[t].get(),r[e.type]=e.config;return r},a},l=function(e){var r,t,n,o,a=this,u=[],f=["regexulator"];for(r=0,t=f.length;t>r;r++)e[f[r]]&&(e[f[r]]===!0&&(e[f[r]]={}),u.push(new i[f[r]](e[f[r]],f[r])));for(var c=0;c<u.length;c++)u[c].get().enabled||u.splice(c--,1);return t=u.length,a.pass=function(e,a){for(n=e,o=n.length,r=0;t>r;r++)n=u[r].exec(n,a);return a.result.offset+=o-n.length,n},a.config=function(){var e,n={};for(r=0;t>r;r++)e=u[r].get(),n[e.type]=e.config;return n},a},p=function(t){var o,u,f,i=this,p=t.lang,h=t.interval||500,d=new s(t),v=new l(t),g={},m=function(e,r,t,n){if(e[r])for(o=e[r],u=0,f=o.length;f>u;u++)o[u].apply(t,n)},y=function(r,t,n,o,u,f){return o.release(),n.before=t.value.substring(0,o.start),n.diff=t.value.substring(o.start,o.end),n.after=t.value.substring(o.end),r.ctrlKey&&a.control[r.keyCode]&&(n.diff+=a.control[r.keyCode]),n.result=d.pass({before:e.textToCodes(n.before),diff:e.textToCodes(n.diff),after:e.textToCodes(n.after),offset:r.ctrlKey&&-n.diff.length||0},n),n.result.value=n.result.before+n.result.diff+n.result.after,n.result.value=v.pass(n.result.value,n),m(u,"change",n,[n.result.value,n.old,p]),n.old=t.value,o.move(n.result.offset),n.keydown=[],f.timer=null,!0},x=function(e){if(e.value.length){var r=g[e.GUID];clearTimeout(r.timer),r.timer||r.cursor.refresh(),y({keyCode:n[0]},e,r.data,r.cursor,r.events,r)}},b=function(r,t,o,a,u,f){if(r.ctrlKey)switch(r.keyCode){case 90:case 67:return!1;case 89:return r.preventDefault(),!1}return o.mousedown?(r.preventDefault(),!1):-1==e.indexOf(n,r.keyCode)?(f.timer&&x(t),!1):(clearTimeout(f.timer),o.keydown.push({keyCode:r.keyCode,shiftKey:r.shiftKey,ctrlKey:r.ctrlKey}),f.timer||a.press(),f.timer=setTimeout(function(){y(r,t,o,a,u,f)},h),r.ctrlKey&&-1!=e.indexOf(c.control,r.keyCode)?(r.preventDefault(),!1):!0)};return i.bind=function(t){t.GUID||(t.GUID=e.GUID());var n=g[t.GUID]={};n.data={keydown:[],result:{},old:""},n.cursor=new r(t);var o=n.data,a=n.data.cursor=n.cursor,u=n.events={};return n.keydown=function(e){b(e,t,o,a,u,n)},n.paste=function(){return o.keydown=[],!0},n.dragover=function(e){return e.preventDefault(),!1},n.mousedown=function(){n.data.mousedown=!0,x(t)},n.mouseup=function(){n.data.mousedown=!1},n.mouseleave=function(){n.data.mousedown=!1},n.blur=function(){x(t)},e.addEvent(t,"keydown",n.keydown),e.addEvent(t,"paste",n.paste),e.addEvent(t,"mousedown",n.mousedown),e.addEvent(t,"mouseup",n.mouseup),e.addEvent(t,"mouseleave",n.mouseleave),e.addEvent(t,"dragover",n.dragover),e.addEvent(t,"blur",n.blur),t.focus(),i},i.unbind=function(r){var t=g[r.GUID];return e.removeEvent(r,"keydown",t.keydown),e.removeEvent(r,"paste",t.paste),e.removeEvent(r,"mousedown",t.mousedown),e.removeEvent(r,"mouseup",t.mouseup),e.removeEvent(r,"mouseleave",t.mouseleave),e.removeEvent(r,"dragover",t.dragover),e.removeEvent(r,"blur",t.blur),delete g[r.GUID],delete t,delete r.GUID,i},i.on=function(e,r,t){switch(g[r.GUID].events[e]=g[r.GUID].events[e]||[],g[r.GUID].events[e].push(t),e){case"change":r.value.length&&x(r)}return i},i.off=function(r,t,n){return u=e.indexOf(g[t.GUID].events[r],n),-1==u?i:(g[t.GUID].events[r].splice(u,1),i)},i},h=function(e){if("undefined"!=typeof e.lang){var r=e.lang;for(var t in e)e[t]&&(1==e[t]&&(e[t]={}),e[t].lang=r)}},d=function(e,r){if(!r)return e;for(var t in r)e[t]="object"==typeof e[t]?d(e[t],r[t]):r[t];return e},v=function(e,r){if(("object"==typeof e||"undefined"==typeof e)&&(r=e,e="default"),!m[e])throw new Error("Can not find liveinput type "+e);return m[e](r)},g=function(e){d(m,e)},m={"default":function(e){var r=d({lang:"",interval:700,layout:!0,include:{chars:!0,numbers:!0,symbols:!0,special:""},exclude:{special:"{}[]"},input:{register:"",capslock:!1},regexulator:{g:{}}},e);return h(r),new p(r)},fio:function(e){var r=" '-",t=d({lang:"ru",include:{numbers:!1,symbols:!1,special:r},regexulator:{g:{"after-char-remove-repeat":r,"after-char-upper-char":["'",""],"after-chars-remove-chars":{"":r}}}},e);return v(t)},numeric:function(e){var r=d({include:{chars:!1,numbers:!0,symbols:!1,special:""}},e);return v(r)},place:function(e){var r=". '-",t=d({lang:"ru",include:{numbers:!1,symbols:!1,special:r},regexulator:{g:{"after-char-remove-repeat":r,"after-char-upper-char":["'",""],"after-chars-remove-chars":{"":r}}}},e);return v(t)},"peopled-place":function(e){var r=d({include:{numbers:!0}},e);return v("place",r)},address:function(e){var r="-/",t=d({include:{symbols:!1,special:r},input:{register:"upper",capslock:!0},regexulator:{g:{"after-char-remove-repeat":r,"after-chars-remove-chars":{"":r}}}},e);return v(t)},month:function(e){var r=d({lang:"ru",include:{numbers:!0,symbols:!1},input:{capslock:!1},regexulator:{g:{"after-char-remove-repeat":"0","after-char-upper-char":""}}},e);return v(r)},"passport-issue":function(e){var r='. -"№',t=d({lang:"ru",include:{numbers:!1,symbols:!1,special:r},input:{capslock:!0},regexulator:{g:{"after-char-remove-repeat":r,"after-chars-remove-chars":{"":r}}}},e);return v(t)},"international-passport-issue":function(e){var r=" -",t=d({lang:"",include:{numbers:!1,symbols:!1,special:r},input:{capslock:!0},regexulator:{g:{"after-char-remove-repeat":r,"after-chars-remove-chars":{"":r}}}},e);return v(t)},"international-document-serial":function(e){var r=d({lang:"",include:{numbers:!0,symbols:!1}},e);return v(r)},"document-issue":function(e){var r=" .,-/\"()№'",t=d({lang:"ru",include:{numbers:!0,symbols:!1,special:r},input:{register:"lower",capslock:!0},regexulator:{g:{"after-char-remove-repeat":r,"after-chars-remove-chars":{"":r}}}},e);return v(t)}};return{init:v,configuration:g}};"undefined"!=typeof module?module.exports=liveinput:window&&(window.liveinput=liveinput);
-//# sourceMappingURL=liveinput.js.map
+/**
+ * liveinput - Input text auto changer
+ * @version v1.0.0
+ * @link https://github.com/vahpetr/liveinput/
+ * @license Apache-2.0
+ */
+var liveinput = new function() {
+    var helper = function() {
+        return new function() {
+            var rnd = Math.random;
+            var bind = Function.prototype.bind ? function(func, thisArg) {
+                return func.bind(thisArg);
+            } : function(func, thisArg) {
+                var slice = Array.prototype.slice, args = slice.call(arguments, 2);
+                return function() {
+                    return func.apply(thisArg, args.concat(slice.call(arguments)));
+                };
+            };
+            var extrude = function(thisArg) {
+                return bind(Function.prototype.call, thisArg);
+            };
+            var filter = Array.prototype.filter ? extrude(Array.prototype.filter) : function(arr, cb) {
+                var i, l, res = [];
+                for (i = 0, l = arr.length; i < l; i++) if (cb(arr[i], i, arr)) res.push(arr[i]);
+                return res;
+            };
+            var map = Array.prototype.map ? extrude(Array.prototype.map) : function(arr, cb) {
+                var i, l, res = [];
+                for (i = 0, l = arr.length; i < l; i++) res.push(cb(arr[i], i, arr));
+                return res;
+            };
+            var forEach = Array.prototype.forEach ? extrude(Array.prototype.forEach) : function(arr, cb) {
+                for (var i = 0, l = arr.length; i < l; i++) cb(arr[i], i, arr);
+            };
+            var indexOf = Array.prototype.indexOf ? extrude(Array.prototype.indexOf) : function(arr, v) {
+                var i, l;
+                for (i = 0, l = arr.length; i < l; i++) if (arr[i] == v) return i;
+                return -1;
+            };
+            var except = function(target, remove) {
+                return filter(target, function(i) {
+                    return indexOf(remove, i) == -1;
+                });
+            };
+            var charToCode = function(c) {
+                return c.charCodeAt();
+            };
+            var textToCodes = function(text) {
+                return map(text.split(""), charToCode);
+            };
+            var codesToText = function(codes) {
+                return String.fromCharCode.apply(void 0, codes);
+            };
+            var addEvent = function(el, event, cb) {
+                if (el.addEventListener) return el.addEventListener(event, cb, true);
+                return el.attachEvent("on" + event, cb);
+            };
+            var removeEvent = function(el, event, cb) {
+                if (el.removeEventListener) return el.removeEventListener(event, cb, true);
+                return el.detachEvent("on" + event, cb);
+            };
+            var guidchar = function() {
+                return (16 * rnd() | 0).toString(16);
+            };
+            var guid = function() {
+                return "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx".replace(/x/g, guidchar);
+            };
+            var format = function(text, arg) {
+                for (var i = 0, l = arg.length; i < l; i++) text = text.replace(new RegExp("\\{" + i + "\\}", "g"), arg[i]);
+                return text;
+            };
+            var fill = function(l, cb) {
+                var res = [];
+                for (var i = 0; i < l; i++) res.push(cb(i, l, res));
+                return res;
+            };
+            var getSelectionStart = function(el) {
+                if (el.createTextRange) {
+                    var r = document.selection.createRange().duplicate();
+                    r.moveEnd("character", el.value.length);
+                    if ("" == r.text) return el.value.length;
+                    return el.value.lastIndexOf(r.text);
+                } else return el.selectionStart;
+            };
+            var getSelectionEnd = function(el) {
+                if (el.createTextRange) {
+                    var r = document.selection.createRange().duplicate();
+                    r.moveStart("character", -el.value.length);
+                    return r.text.length;
+                } else return el.selectionEnd;
+            };
+            var setCaretPosition = function(el, pos) {
+                if (el.setSelectionRange) return el.setSelectionRange(pos.start, pos.end);
+                if (!el.createTextRange) return;
+                var range = el.createTextRange();
+                range.collapse(true);
+                range.moveStart("character", pos.start);
+                range.moveEnd("character", pos.end);
+                range.select();
+            };
+            var getOwnPropertyNames = function(obj) {
+                var props = [];
+                for (var p in obj) if (obj.hasOwnProperty(p)) props.push(p);
+                return props;
+            };
+            var isArray = Array.isArray || function(arg) {
+                return "[object Array]" === Object.prototype.toString.call(arg);
+            };
+            return {
+                charToCode: charToCode,
+                textToCodes: textToCodes,
+                codesToText: codesToText,
+                addEvent: addEvent,
+                removeEvent: removeEvent,
+                GUID: guid,
+                format: format,
+                fill: fill,
+                getSelectionStart: getSelectionStart,
+                getSelectionEnd: getSelectionEnd,
+                setCaretPosition: setCaretPosition,
+                getOwnPropertyNames: getOwnPropertyNames,
+                bind: bind,
+                filter: filter,
+                map: map,
+                forEach: forEach,
+                except: except,
+                indexOf: indexOf,
+                isArray: isArray
+            };
+        }();
+    }();
+    var Cursor = function(el) {
+        var self = this;
+        var max = Math.max;
+        self.start = 0;
+        self.end = 0;
+        self.press = function() {
+            self.end = self.start = helper.getSelectionStart(el);
+        };
+        self.release = function() {
+            self.end = helper.getSelectionEnd(el);
+        };
+        self.change = function() {
+            self.start = helper.getSelectionStart(el);
+            self.end = helper.getSelectionEnd(el);
+        };
+        var maxpos;
+        self.move = function(offset) {
+            maxpos = max(self.start - offset, self.end - offset);
+            helper.setCaretPosition(el, {
+                start: maxpos,
+                end: maxpos
+            });
+            self.press();
+        };
+        self.refresh = function() {
+            helper.setCaretPosition(el, {
+                start: 0,
+                end: el.value.length
+            });
+            self.change();
+        };
+        return self;
+    };
+    var langs = [ "ru", "en" ];
+    var whitelist = [ 192, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 65, 83, 68, 70, 71, 72, 74, 75, 76, 186, 222, 220, 226, 90, 88, 67, 86, 66, 78, 77, 188, 190, 191, 111, 106, 109, 107, 12 ];
+    var additional = {
+        keyCodes: [ 32, 13 ],
+        charCodes: [ 32, 10 ]
+    };
+    whitelist.push.apply(whitelist, additional.keyCodes);
+    var hotkeymap = {
+        control: {
+            50: "@",
+            51: "#",
+            52: "$",
+            53: "%",
+            54: "^",
+            55: "&",
+            222: "'"
+        }
+    };
+    var parseCode = function(code) {
+        return parseInt(code, 10);
+    };
+    var keymapper = function(map) {
+        var props = helper.getOwnPropertyNames(map);
+        return helper.map(props, parseCode);
+    };
+    var hotkey = {
+        control: keymapper(hotkeymap.control)
+    };
+    var command = {};
+    command.layout = function(config, type) {
+        var self = this;
+        self.type = type;
+        var lang = config.lang;
+        var map = {
+            ru: [ 1105, 1081, 1094, 1091, 1082, 1077, 1085, 1075, 1096, 1097, 1079, 1092, 1099, 1074, 1072, 1087, 1088, 1086, 1083, 1076, 1103, 1095, 1089, 1084, 1080, 1090, 1100, 1025, 1049, 1062, 1059, 1050, 1045, 1053, 1043, 1064, 1065, 1047, 1060, 1067, 1042, 1040, 1055, 1056, 1054, 1051, 1044, 1071, 1063, 1057, 1052, 1048, 1058, 1068, 1093, 1098, 92, 49, 51, 53, 56, 57, 48, 45, 61, 1061, 1066, 47, 33, 8470, 37, 42, 40, 41, 95, 43 ],
+            en: [ 96, 113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 97, 115, 100, 102, 103, 104, 106, 107, 108, 122, 120, 99, 118, 98, 110, 109, 126, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 90, 88, 67, 86, 66, 78, 77, 91, 93, 92, 49, 51, 53, 56, 57, 48, 45, 61, 123, 125, 124, 33, 35, 37, 42, 40, 41, 95, 43 ]
+        };
+        for (var p in map) map[p].push.apply(map[p], additional.charCodes);
+        var relation = {
+            50: [ [ 50, 34 ], [ 50, 64 ] ],
+            52: [ [ 52, 59 ], [ 52, 36 ] ],
+            54: [ [ 54, 58 ], [ 54, 94 ] ],
+            55: [ [ 55, 63 ], [ 55, 38 ] ],
+            186: [ [ 1078, 1046 ], [ 59, 58 ] ],
+            222: [ [ 1101, 1069 ], [ 39, 34 ] ],
+            188: [ [ 1073, 1041 ], [ 44, 60 ] ],
+            190: [ [ 1102, 1070 ], [ 46, 62 ] ],
+            191: [ [ 46, 44 ], [ 47, 63 ] ]
+        };
+        var special = {
+            50: 64,
+            51: 35,
+            52: 36,
+            53: 37,
+            54: 94,
+            222: 39
+        };
+        var convert = {};
+        var keyCode, i, l;
+        for (keyCode in relation) convert[keyCode] = {};
+        for (i = 0, l = langs.length; i < l; i++) for (keyCode in relation) convert[keyCode][langs[i]] = relation[keyCode][i];
+        var others = lang ? helper.except(langs, [ lang ]) : langs;
+        var j, diff, code, index, added, length, k = others.length;
+        self.exec = function(compute, data) {
+            if (!data.keydown.length) return compute;
+            diff = compute.diff;
+            length = diff.length;
+            var converted = [];
+            for (i = 0, l = diff.length; i < l; i++) {
+                code = diff[i];
+                added = false;
+                index = helper.indexOf(map[lang], code);
+                if (index != -1) {
+                    converted.push(code);
+                    continue;
+                }
+                for (j = 0; j < k; j++) {
+                    index = helper.indexOf(map[others[j]], code);
+                    if (index == -1) continue;
+                    converted.push(map[lang][index]);
+                    added = true;
+                    break;
+                }
+                if (added) continue;
+                if (data.keydown[i].ctrlKey && special[data.keydown[i].keyCode] == code) {
+                    converted.push(code);
+                    continue;
+                }
+                if (!convert[data.keydown[i].keyCode]) break;
+                index = helper.indexOf(convert[data.keydown[i].keyCode][lang], code);
+                if (index != -1) {
+                    converted.push(code);
+                    continue;
+                }
+                for (j = 0; j < k; j++) {
+                    index = helper.indexOf(convert[data.keydown[i].keyCode][others[j]], code);
+                    if (index == -1) continue;
+                    converted.push(convert[data.keydown[i].keyCode][lang][index]);
+                    added = true;
+                    break;
+                }
+                if (added) continue;
+                data.keydown.splice(i, 1);
+            }
+            compute.diff = converted;
+            compute.offset += length - compute.diff.length;
+            return compute;
+        };
+        self.get = function() {
+            return {
+                type: type,
+                enabled: config.lang ? true : false,
+                config: config
+            };
+        };
+        return self;
+    };
+    command.include = function(config, type) {
+        var self = this;
+        self.type = type;
+        var lang = config.lang || "";
+        var presets = [];
+        helper.forEach([ "numbers", "symbols" ], function(preset) {
+            if (!config[preset]) return;
+            presets.push(preset);
+        });
+        var special = config.special || "";
+        var i, l, index;
+        var sources = lang ? [ lang ] : langs;
+        for (i = 0, l = sources.length; i < l; i++) {
+            index = helper.indexOf(presets, sources[i]);
+            if (index != -1) continue;
+            presets.push(sources[i]);
+        }
+        special = helper.textToCodes(special);
+        if (special.length && helper.indexOf(presets, "special") == -1) presets.push("special");
+        if (!config.chars) helper.forEach(langs, function(l) {
+            index = helper.indexOf(presets, l);
+            if (index == -1) return;
+            presets.splice(index, 1);
+        });
+        var map = {
+            ru: [ 1092, 1099, 1074, 1072, 1087, 1088, 1086, 1083, 1076, 1081, 1094, 1091, 1082, 1077, 1085, 1075, 1096, 1097, 1079, 1103, 1095, 1089, 1084, 1080, 1090, 1100, 1093, 1098, 1078, 1101, 1073, 1102, 1105, 1060, 1067, 1042, 1040, 1055, 1056, 1054, 1051, 1044, 1049, 1062, 1059, 1050, 1045, 1053, 1043, 1064, 1065, 1047, 1071, 1063, 1057, 1052, 1048, 1058, 1068, 1061, 1066, 1046, 1069, 1041, 1070, 1025 ],
+            en: [ 97, 115, 100, 102, 103, 104, 106, 107, 108, 113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 122, 120, 99, 118, 98, 110, 109, 65, 83, 68, 70, 71, 72, 74, 75, 76, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 90, 88, 67, 86, 66, 78, 77 ],
+            numbers: [ 48, 49, 50, 51, 52, 53, 54, 55, 56, 57 ],
+            symbols: [ 32, 10, 96, 45, 61, 126, 33, 64, 35, 36, 37, 94, 38, 42, 40, 41, 95, 43, 91, 93, 59, 39, 92, 44, 46, 47, 123, 125, 58, 34, 124, 60, 62, 63, 8470 ],
+            special: special
+        };
+        var j, diff, length, added, k = presets.length;
+        self.exec = function(compute, data) {
+            diff = compute.diff;
+            length = diff.length;
+            var allowed = [];
+            for (i = 0, l = diff.length; i < l; i++) {
+                added = false;
+                for (j = 0; j < k; j++) {
+                    index = helper.indexOf(map[presets[j]], diff[i]);
+                    if (index == -1) continue;
+                    allowed.push(diff[i]);
+                    added = true;
+                    break;
+                }
+                if (added) continue;
+                data.keydown.splice(i, 1);
+            }
+            compute.diff = allowed;
+            compute.offset += length - compute.diff.length;
+            return compute;
+        };
+        self.get = function() {
+            return {
+                type: type,
+                enabled: presets.length || special.length ? true : false,
+                config: config
+            };
+        };
+        return self;
+    };
+    command.exclude = function(config, type) {
+        delete config.lang;
+        var self = this;
+        self.type = type;
+        var special = config.special || "";
+        special = helper.textToCodes(special);
+        var i, l, index, diff, length;
+        self.exec = function(compute) {
+            diff = compute.diff;
+            length = diff.length;
+            var allowed = [];
+            for (i = 0, l = diff.length; i < l; i++) {
+                index = helper.indexOf(special, diff[i]);
+                if (index == -1) allowed.push(diff[i]);
+            }
+            compute.diff = allowed;
+            compute.offset += length - compute.diff.length;
+            return compute;
+        };
+        self.get = function() {
+            return {
+                type: type,
+                enabled: special.length ? true : false,
+                config: config
+            };
+        };
+        return self;
+    };
+    command.input = function(config, type) {
+        var self = this;
+        self.type = type;
+        var lang = config.lang;
+        var register = config.register;
+        var capslock = config.capslock;
+        var map = {
+            ru: {
+                lower: [ 1092, 1099, 1074, 1072, 1087, 1088, 1086, 1083, 1076, 1078, 1101, 1081, 1094, 1091, 1082, 1077, 1085, 1075, 1096, 1097, 1079, 1093, 1098, 1103, 1095, 1089, 1084, 1080, 1090, 1100, 1073, 1102, 1105 ],
+                upper: [ 1060, 1067, 1042, 1040, 1055, 1056, 1054, 1051, 1044, 1046, 1069, 1049, 1062, 1059, 1050, 1045, 1053, 1043, 1064, 1065, 1047, 1061, 1066, 1071, 1063, 1057, 1052, 1048, 1058, 1068, 1041, 1070, 1025 ]
+            },
+            en: {
+                lower: [ 97, 115, 100, 102, 103, 104, 106, 107, 108, 113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 122, 120, 99, 118, 98, 110, 109 ],
+                upper: [ 65, 83, 68, 70, 71, 72, 74, 75, 76, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 90, 88, 67, 86, 66, 78, 77 ]
+            }
+        };
+        var sources = lang ? [ lang ] : langs;
+        var findhere = helper.except(helper.getOwnPropertyNames(map[sources[0]]), [ register ])[0];
+        var sequence = [ "register", "capslock" ];
+        var i, l, j, index, diff, added, right, wrong, length, m, k = sources.length, n = sequence.length;
+        var handler = {};
+        handler.register = function(compute) {
+            diff = compute.diff;
+            length = diff.length;
+            var result = [];
+            for (i = 0, l = diff.length; i < l; i++) {
+                added = false;
+                for (j = 0; j < k; j++) {
+                    index = helper.indexOf(map[sources[j]][findhere], diff[i]);
+                    if (index == -1) continue;
+                    result.push(map[sources[j]][register][index]);
+                    added = true;
+                    break;
+                }
+                if (added) continue;
+                result.push(diff[i]);
+            }
+            compute.diff = result;
+            compute.offset += length - compute.diff.length;
+            return compute;
+        };
+        handler.capslock = function(compute, data) {
+            if (!data.keydown.length) return compute;
+            diff = compute.diff;
+            length = diff.length;
+            var result = [];
+            for (i = 0, l = diff.length; i < l; i++) {
+                added = false;
+                right = register || (data.keydown[i].shiftKey ? "upper" : "lower");
+                if (register && data.keydown[i].shiftKey) right = "upper" == right ? "lower" : "upper";
+                wrong = "upper" == right ? "lower" : "upper";
+                for (j = 0; j < k; j++) {
+                    index = helper.indexOf(map[sources[j]][right], diff[i]);
+                    if (index != -1) continue;
+                    index = helper.indexOf(map[sources[j]][wrong], diff[i]);
+                    if (index == -1) continue;
+                    result.push(map[sources[j]][right][index]);
+                    added = true;
+                    break;
+                }
+                if (added) continue;
+                result.push(diff[i]);
+            }
+            compute.diff = result;
+            compute.offset += length - compute.diff.length;
+            return compute;
+        };
+        self.exec = function(compute, data) {
+            var result = compute;
+            for (m = 0; m < n; m++) {
+                if (!config[sequence[m]]) continue;
+                result = handler[sequence[m]](result, data);
+            }
+            return result;
+        };
+        self.get = function() {
+            return {
+                type: type,
+                enabled: register || capslock ? true : false,
+                config: config
+            };
+        };
+        return self;
+    };
+    command.regexulator = function(config, type) {
+        var self = this;
+        self.type = type;
+        delete config.lang;
+        var templates = {
+            "after-chars-remove-chars": "((?:{0})+)(?:{1})+",
+            "after-term-remove-chars": "((?:^|\\s)+{0}\\s+)(?:{1})+",
+            "after-chars-remove-term": "((?:{0})+)\\s+{1}\\s+",
+            "after-term-remove-term": "((?:^|\\s)+{0}\\s+){1}\\s+",
+            "before-chars-remove-chars": "(?:{1})+((?:{0})+)",
+            "before-term-remove-chars": "(?:{1})+(\\s+{0}\\s+)",
+            "before-chars-remove-term": "(?:^|\\s)+{1}\\s+((?:{0})+)",
+            "before-term-remove-term": "(?:^|\\s)+{1}\\s+({0}\\s+)",
+            "after-char-remove-repeat": "({0}){1}+",
+            "after-char-replace-expr": "({0}{1})",
+            "after-term-replace-expr": "(?:^|\\s)+({0}\\s+{1})",
+            "after-char-upper-char": "({0}[a-zа-яё])"
+        };
+        var map = {
+            "[": "\\[",
+            "]": "\\]",
+            "\\": "\\\\",
+            "/": "\\/",
+            "^": "\\^",
+            $: "\\$",
+            ".": "\\.",
+            "|": "\\|",
+            "?": "\\?",
+            "*": "\\*",
+            "+": "\\+",
+            "(": "\\(",
+            ")": "\\)",
+            "{": "\\{",
+            "}": "\\}",
+            "'": "\\'",
+            "": "^"
+        };
+        var i, l, m, n, removes = {}, interceptions = {}, regexeRemoves = [], regexeInterceptions = [];
+        var mapping = function(c) {
+            return map[c] || c;
+        };
+        var char = function(text) {
+            var chars = text.split("");
+            if (!chars.length) chars.push("");
+            return helper.map(chars, mapping);
+        };
+        var chars = function(val) {
+            return [ char(val).join("|") ];
+        };
+        var term = function(val) {
+            return [ char(val).join("") ];
+        };
+        var template = function(name, arr) {
+            return helper.format(templates[name], arr);
+        };
+        var handler = {};
+        handler["after-chars-remove-chars"] = function(config, name, flag) {
+            for (var text in config) helper.forEach(chars(text), function(param) {
+                helper.forEach(chars(config[text]), function(secondparam) {
+                    removes[flag].push(template(name, [ param, secondparam ]));
+                });
+            });
+        };
+        handler["after-chars-remove-term"] = function(config, name, flag) {
+            for (var text in config) helper.forEach(chars(text), function(param) {
+                helper.forEach(term(config[text]), function(secondparam) {
+                    removes[flag].push(template(name, [ param, secondparam ]));
+                });
+            });
+        };
+        handler["after-term-remove-chars"] = function(config, name, flag) {
+            for (var text in config) helper.forEach(term(text), function(param) {
+                helper.forEach(chars(config[text]), function(secondparam) {
+                    removes[flag].push(template(name, [ param, secondparam ]));
+                });
+            });
+        };
+        handler["after-term-remove-term"] = function(config, name, flag) {
+            for (var text in config) helper.forEach(term(text), function(param) {
+                helper.forEach(term(config[text]), function(secondparam) {
+                    removes[flag].push(template(name, [ param, secondparam ]));
+                });
+            });
+        };
+        handler["after-char-remove-repeat"] = function(config, name, flag) {
+            helper.forEach(char(config), function(param) {
+                removes[flag].push(template(name, [ param, param ]));
+            });
+        };
+        handler["before-chars-remove-chars"] = handler["after-chars-remove-chars"];
+        handler["before-chars-remove-term"] = handler["after-chars-remove-term"];
+        handler["before-term-remove-chars"] = handler["after-term-remove-chars"];
+        handler["before-term-remove-term"] = handler["after-term-remove-term"];
+        handler["after-char-replace-expr"] = function(config, name, flag) {
+            for (var text in config) helper.forEach(char(text), function(param) {
+                interceptions[flag].push({
+                    expr: template(name, [ param, config[text].expr ]),
+                    replacer: config[text].replacer
+                });
+            });
+        };
+        handler["after-char-upper-char"] = function(config, name, flag) {
+            var obj = {};
+            var arr = helper.isArray(config) ? config : [ config ];
+            for (var j = 0, k = arr.length; j < k; j++) obj[arr[j]] = {
+                expr: "[a-zа-яё]",
+                replacer: function(find, c, offset, str, data, noffset) {
+                    if (1 == find.length) str = ""; else str = find[0];
+                    if (!data.keydown.length) return str + find[find.length - 1].toLocaleUpperCase();
+                    if (data.keydown[noffset].shiftKey) return str + find[find.length - 1].toLowerCase();
+                    return str + find[find.length - 1].toLocaleUpperCase();
+                }
+            };
+            handler["after-char-replace-expr"](obj, "after-char-replace-expr", flag);
+        };
+        handler["after-term-replace-expr"] = function(config, name, flag) {
+            for (var text in config) helper.forEach(term(text), function(param) {
+                interceptions[flag].push({
+                    expr: template(name, [ param, config[text].expr ]),
+                    replacer: config[text].replacer
+                });
+            });
+        };
+        for (var flag in config) {
+            if (/[^igm]/g.test(flag)) throw new Error("Command regexulator can not support flag " + flag);
+            flag = flag.split("").sort().join("");
+            removes[flag] = removes[flag] || [];
+            interceptions[flag] = interceptions[flag] || [];
+            helper.forEach([ "after-chars-remove-chars", "after-term-remove-chars", "after-chars-remove-term", "after-term-remove-term", "before-chars-remove-chars", "before-term-remove-chars", "before-chars-remove-term", "before-term-remove-term", "after-char-replace-expr", "after-term-replace-expr", "after-char-remove-repeat", "after-char-upper-char" ], function(name) {
+                if (void 0 == config[flag][name]) return;
+                handler[name](config[flag][name], name, flag);
+            });
+        }
+        for (flag in removes) {
+            if (!removes[flag].length) continue;
+            regexeRemoves.push({
+                expr: new RegExp(removes[flag].join("|"), flag),
+                replacer: helper.fill(removes[flag].length, function(i) {
+                    return "$" + (i + 1);
+                }).join("")
+            });
+        }
+        var selector = function(i) {
+            return i.expr;
+        };
+        for (flag in interceptions) {
+            if (!interceptions[flag].length) continue;
+            regexeInterceptions.push({
+                expr: new RegExp(helper.map(interceptions[flag], selector).join("|"), flag),
+                replacer: interceptions[flag][0].replacer
+            });
+        }
+        var find, c, offset, str;
+        var parseArgs = function(args) {
+            find = args[0];
+            offset = args[args.length - 2];
+            str = args[args.length - 1];
+            for (m = 1, n = args.length - 2; m < n; m++) if (void 0 != args[m]) {
+                c = args[m];
+                break;
+            }
+        };
+        self.exec = function(text, data) {
+            for (i = 0, l = regexeRemoves.length; i < l; i++) text = text.replace(regexeRemoves[i].expr, regexeRemoves[i].replacer);
+            for (i = 0, l = regexeInterceptions.length; i < l; i++) text = text.replace(regexeInterceptions[i].expr, function() {
+                parseArgs(arguments);
+                if (data.cursor.start <= offset + 1 && offset + 1 <= data.cursor.end) {
+                    n = data.before.length + data.diff.length - offset - find.length;
+                    if (!data.keydown[n]) n = 0;
+                    return regexeInterceptions[i].replacer(find, c, offset, str, data, n);
+                }
+                return find;
+            });
+            return text;
+        };
+        self.get = function() {
+            return {
+                type: type,
+                enabled: regexeRemoves.length || regexeInterceptions.length ? true : false,
+                config: config
+            };
+        };
+        return self;
+    };
+    var Preprocessor = function(config) {
+        var self = this;
+        var i, l, result, processes = [];
+        var sequence = [ "layout", "include", "exclude", "input" ];
+        for (i = 0, l = sequence.length; i < l; i++) {
+            if (!config[sequence[i]]) continue;
+            if (true === config[sequence[i]]) config[sequence[i]] = {};
+            processes.push(new command[sequence[i]](config[sequence[i]], sequence[i]));
+        }
+        for (var j = 0; j < processes.length; j++) if (!processes[j].get().enabled) processes.splice(j--, 1);
+        l = processes.length;
+        self.pass = function(compute, data) {
+            result = compute;
+            for (i = 0; i < l; i++) result = processes[i].exec(result, data);
+            result.before = helper.codesToText(result.before);
+            result.diff = helper.codesToText(result.diff);
+            result.after = helper.codesToText(result.after);
+            result.offset = compute.offset;
+            return result;
+        };
+        self.config = function() {
+            var info, cfg = {};
+            for (i = 0; i < l; i++) {
+                info = processes[i].get();
+                cfg[info.type] = info.config;
+            }
+            return cfg;
+        };
+        return self;
+    };
+    var Postprocessor = function(config) {
+        var self = this;
+        var i, l, result, length, processes = [];
+        var sequence = [ "regexulator" ];
+        for (i = 0, l = sequence.length; i < l; i++) {
+            if (!config[sequence[i]]) continue;
+            if (true === config[sequence[i]]) config[sequence[i]] = {};
+            processes.push(new command[sequence[i]](config[sequence[i]], sequence[i]));
+        }
+        for (var j = 0; j < processes.length; j++) if (!processes[j].get().enabled) processes.splice(j--, 1);
+        l = processes.length;
+        self.pass = function(text, data) {
+            result = text;
+            length = result.length;
+            for (i = 0; i < l; i++) result = processes[i].exec(result, data);
+            data.result.offset += length - result.length;
+            return result;
+        };
+        self.config = function() {
+            var info, cfg = {};
+            for (i = 0; i < l; i++) {
+                info = processes[i].get();
+                cfg[info.type] = info.config;
+            }
+            return cfg;
+        };
+        return self;
+    };
+    var LiveInput = function(config) {
+        var self = this;
+        var lang = config.lang;
+        var interval = config.interval || 500;
+        var preprocessor = new Preprocessor(config);
+        var postprocessor = new Postprocessor(config);
+        var heap = {};
+        var event, eventindex, eventcount;
+        var callevents = function(events, name, data, arg) {
+            if (!events[name]) return;
+            event = events[name];
+            for (eventindex = 0, eventcount = event.length; eventindex < eventcount; eventindex++) event[eventindex].apply(data, arg);
+        };
+        var onkeyup = function(e, el, data, cursor, events, ptr) {
+            cursor.release();
+            data.before = el.value.substring(0, cursor.start);
+            data.diff = el.value.substring(cursor.start, cursor.end);
+            void 0;
+            data.after = el.value.substring(cursor.end);
+            if (e.ctrlKey && hotkeymap.control[e.keyCode]) data.diff += hotkeymap.control[e.keyCode];
+            data.result = preprocessor.pass({
+                before: helper.textToCodes(data.before),
+                diff: helper.textToCodes(data.diff),
+                after: helper.textToCodes(data.after),
+                offset: e.ctrlKey && -data.diff.length || 0
+            }, data);
+            data.result.value = data.result.before + data.result.diff + data.result.after;
+            data.result.value = postprocessor.pass(data.result.value, data);
+            callevents(events, "change", data, [ data.result.value, data.old, lang ]);
+            data.old = el.value;
+            cursor.move(data.result.offset);
+            data.keydown = [];
+            ptr.timer = null;
+            return true;
+        };
+        var refresh = function(el) {
+            if (!el.value.length) return;
+            var ptr = heap[el.GUID];
+            clearTimeout(ptr.timer);
+            if (!ptr.timer) ptr.cursor.refresh();
+            onkeyup({
+                keyCode: whitelist[0]
+            }, el, ptr.data, ptr.cursor, ptr.events, ptr);
+        };
+        var onkeydown = function(e, el, data, cursor, events, ptr) {
+            if (e.ctrlKey) switch (e.keyCode) {
+              case 90:
+              case 67:
+                return false;
+
+              case 89:
+                e.preventDefault();
+                return false;
+            }
+            if (data.mousedown) {
+                e.preventDefault();
+                return false;
+            }
+            if (helper.indexOf(whitelist, e.keyCode) == -1) {
+                if (ptr.timer) refresh(el);
+                return false;
+            }
+            clearTimeout(ptr.timer);
+            data.keydown.push({
+                keyCode: e.keyCode,
+                shiftKey: e.shiftKey,
+                ctrlKey: e.ctrlKey
+            });
+            if (!ptr.timer) cursor.press();
+            ptr.timer = setTimeout(function() {
+                onkeyup(e, el, data, cursor, events, ptr);
+            }, interval);
+            if (e.ctrlKey && helper.indexOf(hotkey.control, e.keyCode) != -1) {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        };
+        self.bind = function(el) {
+            if (!el.GUID) el.GUID = helper.GUID();
+            var ptr = heap[el.GUID] = {};
+            ptr.data = {
+                keydown: [],
+                result: {},
+                old: ""
+            };
+            ptr.cursor = new Cursor(el);
+            var data = ptr.data;
+            var cursor = ptr.data.cursor = ptr.cursor;
+            var events = ptr.events = {};
+            ptr.keydown = function(e) {
+                onkeydown(e, el, data, cursor, events, ptr);
+            };
+            ptr.paste = function() {
+                data.keydown = [];
+                return true;
+            };
+            ptr.dragover = function(e) {
+                e.preventDefault();
+                return false;
+            };
+            ptr.mousedown = function() {
+                ptr.data.mousedown = true;
+                refresh(el);
+            };
+            ptr.mouseup = function() {
+                ptr.data.mousedown = false;
+            };
+            ptr.mouseleave = function() {
+                ptr.data.mousedown = false;
+            };
+            ptr.blur = function() {
+                refresh(el);
+            };
+            ptr.select = function() {
+                refresh(el);
+            };
+            helper.addEvent(el, "keydown", ptr.keydown);
+            helper.addEvent(el, "paste", ptr.paste);
+            helper.addEvent(el, "mousedown", ptr.mousedown);
+            helper.addEvent(el, "mouseup", ptr.mouseup);
+            helper.addEvent(el, "mouseleave", ptr.mouseleave);
+            helper.addEvent(el, "dragover", ptr.dragover);
+            helper.addEvent(el, "blur", ptr.blur);
+            el.focus();
+            return self;
+        };
+        self.unbind = function(el) {
+            var ptr = heap[el.GUID];
+            helper.removeEvent(el, "keydown", ptr.keydown);
+            helper.removeEvent(el, "paste", ptr.paste);
+            helper.removeEvent(el, "mousedown", ptr.mousedown);
+            helper.removeEvent(el, "mouseup", ptr.mouseup);
+            helper.removeEvent(el, "mouseleave", ptr.mouseleave);
+            helper.removeEvent(el, "dragover", ptr.dragover);
+            helper.removeEvent(el, "blur", ptr.blur);
+            delete heap[el.GUID];
+            delete ptr;
+            delete el.GUID;
+            return self;
+        };
+        self.on = function(event, el, cb) {
+            heap[el.GUID].events[event] = heap[el.GUID].events[event] || [];
+            heap[el.GUID].events[event].push(cb);
+            switch (event) {
+              case "change":
+                if (el.value.length) refresh(el);
+            }
+            return self;
+        };
+        self.off = function(event, el, cb) {
+            eventindex = helper.indexOf(heap[el.GUID].events[event], cb);
+            if (eventindex == -1) return self;
+            heap[el.GUID].events[event].splice(eventindex, 1);
+            return self;
+        };
+        return self;
+    };
+    var setLang = function(config) {
+        if ("undefined" == typeof config.lang) return;
+        var lang = config.lang;
+        for (var p in config) {
+            if (!config[p]) continue;
+            if (true == config[p]) config[p] = {};
+            config[p].lang = lang;
+        }
+    };
+    var mergeConfig = function(a, b) {
+        if (!b) return a;
+        for (var p in b) if ("object" == typeof a[p]) a[p] = mergeConfig(a[p], b[p]); else a[p] = b[p];
+        return a;
+    };
+    var init = function(name, options) {
+        if ("object" == typeof name || "undefined" == typeof name) {
+            options = name;
+            name = "default";
+        }
+        if (!types[name]) throw new Error("Can not find liveinput type " + name);
+        return types[name](options);
+    };
+    var configuration = function(config) {
+        mergeConfig(types, config);
+    };
+    var cache = {};
+    var types = {
+        "default": function(options) {
+            var config = mergeConfig({
+                lang: "",
+                interval: 700,
+                layout: true,
+                include: {
+                    chars: true,
+                    numbers: true,
+                    symbols: true,
+                    special: ""
+                },
+                exclude: {
+                    special: "{}[]"
+                },
+                input: {
+                    register: "",
+                    capslock: false
+                },
+                regexulator: {
+                    g: {}
+                }
+            }, options);
+            setLang(config);
+            var key = JSON.stringify(config);
+            var instance = cache[key] || new LiveInput(config);
+            return instance;
+        },
+        fio: function(options) {
+            var special = " '-";
+            var config = mergeConfig({
+                lang: "ru",
+                include: {
+                    numbers: false,
+                    symbols: false,
+                    special: special
+                },
+                regexulator: {
+                    g: {
+                        "after-char-remove-repeat": special,
+                        "after-char-upper-char": [ "'", "" ],
+                        "after-chars-remove-chars": {
+                            "": special
+                        }
+                    }
+                }
+            }, options);
+            return init(config);
+        },
+        numeric: function(options) {
+            var config = mergeConfig({
+                include: {
+                    chars: false,
+                    numbers: true,
+                    symbols: false,
+                    special: ""
+                }
+            }, options);
+            return init(config);
+        },
+        place: function(options) {
+            var special = ". '-";
+            var config = mergeConfig({
+                lang: "ru",
+                include: {
+                    numbers: false,
+                    symbols: false,
+                    special: special
+                },
+                regexulator: {
+                    g: {
+                        "after-char-remove-repeat": special,
+                        "after-char-upper-char": [ "'", "" ],
+                        "after-chars-remove-chars": {
+                            "": special
+                        }
+                    }
+                }
+            }, options);
+            return init(config);
+        },
+        "peopled-place": function(options) {
+            var config = mergeConfig({
+                include: {
+                    numbers: true
+                }
+            }, options);
+            return init("place", config);
+        },
+        address: function(options) {
+            var special = "-/";
+            var config = mergeConfig({
+                include: {
+                    symbols: false,
+                    special: special
+                },
+                input: {
+                    register: "upper",
+                    capslock: true
+                },
+                regexulator: {
+                    g: {
+                        "after-char-remove-repeat": special,
+                        "after-chars-remove-chars": {
+                            "": special
+                        }
+                    }
+                }
+            }, options);
+            return init(config);
+        },
+        month: function(options) {
+            var config = mergeConfig({
+                lang: "ru",
+                include: {
+                    numbers: true,
+                    symbols: false
+                },
+                input: {
+                    capslock: false
+                },
+                regexulator: {
+                    g: {
+                        "after-char-remove-repeat": "0",
+                        "after-char-upper-char": ""
+                    }
+                }
+            }, options);
+            return init(config);
+        },
+        "passport-issue": function(options) {
+            var special = '. -"№';
+            var config = mergeConfig({
+                lang: "ru",
+                include: {
+                    numbers: false,
+                    symbols: false,
+                    special: special
+                },
+                input: {
+                    capslock: true
+                },
+                regexulator: {
+                    g: {
+                        "after-char-remove-repeat": special,
+                        "after-chars-remove-chars": {
+                            "": special
+                        }
+                    }
+                }
+            }, options);
+            return init(config);
+        },
+        "international-passport-issue": function(options) {
+            var special = " -";
+            var config = mergeConfig({
+                lang: "",
+                include: {
+                    numbers: false,
+                    symbols: false,
+                    special: special
+                },
+                input: {
+                    capslock: true
+                },
+                regexulator: {
+                    g: {
+                        "after-char-remove-repeat": special,
+                        "after-chars-remove-chars": {
+                            "": special
+                        }
+                    }
+                }
+            }, options);
+            return init(config);
+        },
+        "international-document-serial": function(options) {
+            var config = mergeConfig({
+                lang: "",
+                include: {
+                    numbers: true,
+                    symbols: false
+                }
+            }, options);
+            return init(config);
+        },
+        "document-issue": function(options) {
+            var special = " .,-/\"()№'";
+            var config = mergeConfig({
+                lang: "ru",
+                include: {
+                    numbers: true,
+                    symbols: false,
+                    special: special
+                },
+                input: {
+                    register: "lower",
+                    capslock: true
+                },
+                regexulator: {
+                    g: {
+                        "after-char-remove-repeat": special,
+                        "after-chars-remove-chars": {
+                            "": special
+                        }
+                    }
+                }
+            }, options);
+            return init(config);
+        }
+    };
+    return {
+        init: init,
+        configuration: configuration
+    };
+}();
+
+if ("undefined" != typeof module) module.exports = liveinput; else if (window) window.liveinput = liveinput;

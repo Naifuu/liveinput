@@ -5,6 +5,8 @@ var uglify = require('gulp-uglify');
 var plumber = require('gulp-plumber');
 var sourcemaps = require('gulp-sourcemaps');
 var notify = require('gulp-notify');
+var header = require('gulp-header');
+var gzip = require('gulp-gzip');
 
 var config = {
     uglify: {
@@ -32,7 +34,7 @@ var config = {
             loops: true, // optimize loops
             unused: true, // drop unused variables/functions
             hoist_funs: true, // hoist function declarations
-            hoist_vars: false, // hoist variable declarations
+            hoist_vars: true, // hoist variable declarations
             if_return: true, // optimize if-s followed by return/continue
             join_vars: true, // join var declarations
             cascade: true, // try to cascade `right` into `left` in sequences
@@ -42,7 +44,7 @@ var config = {
             drop_console: true,
             //droop func
             pure_funcs: [
-                'log',
+                'log'
             ],
             // global definitions
             global_defs: {
@@ -69,37 +71,89 @@ var config = {
         //sourceMapIncludeSources: true,
         //outSourceMap: true,
         //sourceRoot: ''
-    }//,
-    //imagemin: {
-    //    optimizationLevel: 3,
-    //    progressive: true,
-    //    interlaced: true,
-    //    svgoPlugins: [
-    //        { removeViewBox: false }, // don't remove the viewbox atribute from the SVG
-    //        { removeUselessStrokeAndFill: false }, // don't remove Useless Strokes and Fills
-    //        { removeEmptyAttrs: false } // don't remove Empty Attributes from the SVG
-    //    ],
-    //    use: [pngquant()]
-    //}
+    },
+    uglifyRelease: {
+    	mangle: false,
+    	compress: {
+    		//screw_ie8: true, // ?
+    		sequences: false, // join consecutive statemets with the “comma operator”
+    		properties: false, // optimize property access: a["foo"] → a.foo
+    		dead_code: true, // discard unreachable code
+    		drop_debugger: true, // discard “debugger” statements
+    		unsafe: false, // some unsafe optimizations (see below)
+    		conditionals: false, // optimize if-s and conditional expressions
+    		comparisons: false, // optimize comparisons
+    		evaluate: false, // evaluate constant expressions
+    		booleans: false, // optimize boolean expressions
+    		loops: false, // optimize loops
+    		unused: true, // drop unused variables/functions
+    		hoist_funs: false, // hoist function declarations
+    		hoist_vars: false, // hoist variable declarations
+    		if_return: false, // optimize if-s followed by return/continue
+    		join_vars: false, // join var declarations
+    		cascade: false, // try to cascade `right` into `left` in sequences
+    		side_effects: false, // drop side-effect-free statements
+    		warnings: false, // warn about potentially dangerous optimizations/code
+    		//negate_iife: true,
+    		drop_console: true,
+    		//droop func
+    		pure_funcs: [
+                'log'
+    		],
+    		// global definitions
+    		global_defs: {
+    			DEBUG: false
+    		}
+    	},
+    	output: {
+    		beautify: true
+    	}
+    }
 };
+
+var pkg = require('./package.json');
+var banner = ['/**',
+  ' * <%= pkg.name %> - <%= pkg.description %>',
+  ' * @version v<%= pkg.version %>',
+  ' * @link <%= pkg.homepage %>',
+  ' * @license <%= pkg.license %>',
+  ' */',
+  ''].join('\n');
 
 //scripts
 gulp.task('clean-scripts', function () {
     return del.sync(['./dist']);
 });
-gulp.task('scripts', function () {
-    return gulp.src('src/**/*.js')
+gulp.task('scripts-release', function () {
+	return gulp.src('src/liveinput.js')
+        .pipe(plumber())
+        .pipe(concat('liveinput.js'))
+        .pipe(uglify(config.uglifyRelease))
+		.pipe(header(banner, { pkg: pkg }))
+        .pipe(gulp.dest('./dist'))
+        .pipe(notify({ message: "scripts-release generated file: <%= file.relative %>" }));
+});
+gulp.task('scripts-min', ['scripts-release'], function () {
+	return gulp.src('./dist/liveinput.js')
         .pipe(plumber())
         .pipe(sourcemaps.init())
-        .pipe(concat('liveinput.js'))
+        .pipe(concat('liveinput.min.js'))
         .pipe(uglify(config.uglify))
+		.pipe(header(banner, { pkg: pkg }))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('./dist'))
-        .pipe(notify({ message: "scripts generated file: <%= file.relative %>" }));
+        .pipe(notify({ message: "scripts-min generated file: <%= file.relative %>" }));
 });
-gulp.task('build-scripts', ['clean-scripts', 'scripts']);
+gulp.task('scripts-gizp', ['scripts-min'], function () {
+	return gulp.src('./dist/liveinput.min.js')
+        .pipe(plumber())
+		.pipe(gzip())
+        .pipe(gulp.dest('./dist'))
+        .pipe(notify({ message: "scripts-gizp generated file: <%= file.relative %>" }));
+});
+gulp.task('build-scripts', ['clean-scripts', 'scripts-gizp']);
 gulp.task('watch-scripts', function () {
-    gulp.watch('src/**/*.js', ['scripts']);
+	gulp.watch('src/**/*.js', ['build-scripts']);
 });
 
 gulp.task('build', ['build-scripts']);

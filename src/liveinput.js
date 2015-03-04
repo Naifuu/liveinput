@@ -162,6 +162,8 @@ var liveinput = new function () {
 		self.start = 0;
 		self.end = 0;
 
+		//var marker = {};
+
 		self.press = function () {
 			self.end = self.start = helper.getSelectionStart(el);
 			//console.log('press', self.start);
@@ -183,6 +185,14 @@ var liveinput = new function () {
 			self.end = helper.getSelectionEnd(el);
 			//console.log('change', self.start, self.end);
 		};
+		//self.save = function () {
+		//	marker.start = helper.getSelectionStart(el);
+		//	marker.end = helper.getSelectionEnd(el);
+		//	//console.log('change', self.start, self.end);
+		//};
+		//self.load = function() {
+		//	helper.setCaretPosition(el, marker);
+		//};
 		var maxpos;
 		self.move = function (offset) {
 			
@@ -1106,12 +1116,14 @@ var liveinput = new function () {
 			if (!el.value.length) return;
 			var ptr = heap[el.GUID];
 			clearTimeout(ptr.timer);
+			//ptr.cursor.save();
 			if (!ptr.timer) {
 				ptr.cursor.refresh();
 			}				
 			onkeyup({
 				keyCode: whitelist[0]
 			}, el, ptr.data, ptr.cursor, ptr.events, ptr);
+			//ptr.cursor.load();
 		}
 
 		var onkeydown = function (e, el, data, cursor, events, ptr) {
@@ -1234,7 +1246,12 @@ var liveinput = new function () {
 				//if (ptr.timer)
 					refresh(el);
 			}
+			ptr.select = function () {
+				//console.log('select');
 
+				//if (ptr.timer)
+				refresh(el);
+			}
 			helper.addEvent(el, 'keydown', ptr.keydown);
 			helper.addEvent(el, 'paste', ptr.paste);
 			helper.addEvent(el, 'mousedown', ptr.mousedown);
@@ -1242,6 +1259,7 @@ var liveinput = new function () {
 			helper.addEvent(el, 'mouseleave', ptr.mouseleave);
 			helper.addEvent(el, 'dragover', ptr.dragover);
 			helper.addEvent(el, 'blur', ptr.blur);
+			//helper.addEvent(el, 'select', ptr.select);
 
 			el.focus();
 			return self;
@@ -1256,6 +1274,7 @@ var liveinput = new function () {
 			helper.removeEvent(el, 'mouseleave', ptr.mouseleave);
 			helper.removeEvent(el, 'dragover', ptr.dragover);
 			helper.removeEvent(el, 'blur', ptr.blur);
+			//helper.removeEvent(el, 'select', ptr.select);
 
 			delete heap[el.GUID];
 			delete ptr;
@@ -1324,6 +1343,8 @@ var liveinput = new function () {
 	var configuration = function (config) {
 		mergeConfig(types, config);
 	};
+
+	var cache = {};
 
 	var types = {
 		'default': function (options) {
@@ -1403,7 +1424,9 @@ var liveinput = new function () {
 				}
 			}, options);
 			setLang(config);
-			return new LiveInput(config);
+			var key = JSON.stringify(config);
+			var instance = cache[key] || new LiveInput(config);
+			return instance;
 		},
 		'fio': function (options) {
 			var special = ' \'-';
