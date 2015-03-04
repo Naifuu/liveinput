@@ -1,4 +1,4 @@
-
+﻿
 var liveinput = new function () {
 	var helper = (function() {
 		return new function() {
