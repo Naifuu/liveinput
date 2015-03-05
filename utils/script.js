@@ -9,7 +9,7 @@ var drawHtml = function (name, els, validators, config) {//<br/>
 	var html = '<fieldset><legend>' + name;
 	if (config) html += ' (configured)';
 	html+='</legend>';
-	if (config) html += '<code>config: ' + JSON.stringify(config, null, 2) + '</code>';
+	if (config) html += '<code>var config = ' + JSON.stringify(config, null, 2) + '</code>';
 	for (var i = 0, l = els.length; i < l; i++) {
 		if (name != els[i]) {
 			html += '<label for="' + els[i] + 'Input">' + els[i] + ': </label>';
