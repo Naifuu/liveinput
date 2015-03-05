@@ -1033,11 +1033,11 @@ var liveinput = new function () {
 		var heap = {};
 
 		var event, eventIndex, eventCount, eventExtend = {};
-		var callevents = function (el, events, name, data, arg) {
+		var callevents = function (el, events, name, ptr, arg) {
 			if (!events[name]) return;
 			event = events[name];
 			for (eventIndex = 0, eventCount = event.length; eventIndex < eventCount; eventIndex++) {
-				event[eventIndex].apply(data, arg);
+				event[eventIndex].apply(ptr, arg);
 			}
 			if (name != 'change') return;
 			if (eventExtend.old == el.value) return;
@@ -1118,7 +1118,7 @@ var liveinput = new function () {
 			
 			data.result.value = postprocessor.pass(data.result.value, data);
 			
-			callevents(el, events, 'change', data, [data.result.value, data.old, lang]);
+			callevents(el, events, 'change', ptr, [data.result.value, data.old, lang]);
 
 			data.old = el.value;
 
@@ -1221,6 +1221,7 @@ var liveinput = new function () {
 				el.GUID = helper.GUID();
 			}
 			var ptr = heap[el.GUID] = {};
+			ptr.el = el;
 			ptr.data = {
 				keydown: [],
 				result: {},
