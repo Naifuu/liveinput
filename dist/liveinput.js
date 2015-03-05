@@ -1,6 +1,6 @@
 /**
  * liveinput - Input text auto changer
- * @version v1.0.2
+ * @version v1.0.3
  * @link https://github.com/vahpetr/liveinput/
  * @license Apache-2.0
  */
@@ -697,7 +697,7 @@ var liveinput = new function() {
     var LiveInput = function(config) {
         var self = this;
         var lang = config.lang;
-        var interval = config.interval || 500;
+        var interval = config.interval;
         var preprocessor = new Preprocessor(config);
         var postprocessor = new Postprocessor(config);
         var heap = {};
@@ -882,7 +882,7 @@ var liveinput = new function() {
         "default": function(options) {
             var config = mergeConfig({
                 lang: "",
-                interval: 700,
+                interval: 0,
                 layout: true,
                 include: {
                     chars: true,
@@ -992,6 +992,7 @@ var liveinput = new function() {
         month: function(options) {
             var config = mergeConfig({
                 lang: "ru",
+                interval: 700,
                 include: {
                     numbers: true,
                     symbols: false

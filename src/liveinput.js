@@ -1004,7 +1004,7 @@ var liveinput = new function () {
 	var LiveInput = function(config) {
 		var self = this; 
 		var lang = config.lang;
-		var interval = config.interval || 500;
+		var interval = config.interval;
 		var preprocessor = new Preprocessor(config);
 		var postprocessor = new Postprocessor(config);
 		//processor.config();//log
@@ -1352,7 +1352,7 @@ var liveinput = new function () {
 			var config = mergeConfig({
 				//язык ru/en
 				lang: '',
-				interval: 700,//1,
+				interval: 0,//1,
 				//отвечает за перевод одного языка в другой
 				layout: true,
 				//отвечает за разрешённые символы
@@ -1514,6 +1514,7 @@ var liveinput = new function () {
 		'month': function (options) {
 			var config = mergeConfig({
 				lang: 'ru',
+				interval: 700,
 				include: {
 					numbers: true,
 					symbols: false
