@@ -124,14 +124,31 @@ var liveinput = new function () {
 			var isArray = Array.isArray || function (arg) {
 				return Object.prototype.toString.call(arg) === '[object Array]';
 			};
-
+			var extend = function(a,b) {
+				if (!b) return;
+				// ReSharper disable once MissingHasOwnPropertyInForeach
+				for (var p in b) {
+					a[p] = b[p];
+				}
+			}
+			var callEvent = function (el, event, obj) {
+				var e;
+				if (document.createEvent) {
+					e = document.createEvent('HTMLEvents');
+					extend(e, obj);
+					e.initEvent(event, false, false);
+					return el.dispatchEvent(e);
+				}
+				//if (!document.createEventObject) return;
+				e = document.createEventObject();
+				extend(e, obj);
+				el.fireEvent('on' + event, e);
+			};
 			return {
 				charToCode: charToCode,
 				textToCodes: textToCodes,
 				//codeToChar: codeToChar,
 				codesToText: codesToText,
-				addEvent: addEvent,
-				removeEvent: removeEvent,
 				GUID: guid,
 				format: format,
 				fill: fill,
@@ -145,7 +162,12 @@ var liveinput = new function () {
 				forEach: forEach,
 				except: except,
 				indexOf: indexOf,
-				isArray: isArray
+				isArray: isArray,
+				event: {
+					add: addEvent,
+					remove: removeEvent,
+					call: callEvent
+				}
 			};
 		}
 	})();
@@ -1009,14 +1031,19 @@ var liveinput = new function () {
 		var postprocessor = new Postprocessor(config);
 		//processor.config();//log
 		var heap = {};
-		
-		var event, eventindex, eventcount;
-		var callevents = function (events, name, data, arg) {
+
+		var event, eventIndex, eventCount, eventExtend = {};
+		var callevents = function (el, events, name, data, arg) {
 			if (!events[name]) return;
 			event = events[name];
-			for (eventindex = 0, eventcount = event.length; eventindex < eventcount; eventindex++) {
-				event[eventindex].apply(data, arg);
+			for (eventIndex = 0, eventCount = event.length; eventIndex < eventCount; eventIndex++) {
+				event[eventIndex].apply(data, arg);
 			}
+			if (name != 'change') return;
+			if (eventExtend.old == el.value) return;
+			eventExtend.value = el.value;
+			helper.event.call(el, 'liveinput', eventExtend);
+			eventExtend.old = eventExtend.value;
 		};
 		//window.kb = [];
 		var onkeyup = function (e, el, data, cursor, events, ptr) {
@@ -1050,7 +1077,7 @@ var liveinput = new function () {
 			data.before = el.value.substring(0, cursor.start);
 			data.diff = el.value.substring(cursor.start, cursor.end);
 			//console.log(helper.charToCode(data.diff));//log
-			console.log('onkeyup', data.diff);
+			//console.log('onkeyup', data.diff);
 
 			//var press = {};
 			//press[data.diff] = e.keyCode;
@@ -1079,9 +1106,7 @@ var liveinput = new function () {
 				diff: helper.textToCodes(data.diff),
 				after: helper.textToCodes(data.after),
 				offset: e.ctrlKey && -data.diff.length || 0
-			}, data);
-
-			
+			}, data);		
 
 			//var press = {
 			//	keyCode: e.keyCode,
@@ -1093,7 +1118,7 @@ var liveinput = new function () {
 			
 			data.result.value = postprocessor.pass(data.result.value, data);
 			
-			callevents(events, 'change', data, [data.result.value, data.old, lang]);
+			callevents(el, events, 'change', data, [data.result.value, data.old, lang]);
 
 			data.old = el.value;
 
@@ -1252,13 +1277,19 @@ var liveinput = new function () {
 				//if (ptr.timer)
 				refresh(el);
 			}
-			helper.addEvent(el, 'keydown', ptr.keydown);
-			helper.addEvent(el, 'paste', ptr.paste);
-			helper.addEvent(el, 'mousedown', ptr.mousedown);
-			helper.addEvent(el, 'mouseup', ptr.mouseup);
-			helper.addEvent(el, 'mouseleave', ptr.mouseleave);
-			helper.addEvent(el, 'dragover', ptr.dragover);
-			helper.addEvent(el, 'blur', ptr.blur);
+			//ptr.liveinput = function(e) {
+
+			//};
+			helper.event.add(el, 'keydown', ptr.keydown);
+			helper.event.add(el, 'paste', ptr.paste);
+			helper.event.add(el, 'mousedown', ptr.mousedown);
+			helper.event.add(el, 'mouseup', ptr.mouseup);
+			helper.event.add(el, 'mouseleave', ptr.mouseleave);
+			helper.event.add(el, 'dragover', ptr.dragover);
+			helper.event.add(el, 'blur', ptr.blur);
+
+			//helper.event.add(el, 'liveinput', ptr.liveinput);
+
 			//helper.addEvent(el, 'select', ptr.select);
 
 			el.focus();
@@ -1267,13 +1298,16 @@ var liveinput = new function () {
 		self.unbind = function(el) {
 			var ptr = heap[el.GUID];
 
-			helper.removeEvent(el, 'keydown', ptr.keydown);
-			helper.removeEvent(el, 'paste', ptr.paste);
-			helper.removeEvent(el, 'mousedown', ptr.mousedown);
-			helper.removeEvent(el, 'mouseup', ptr.mouseup);
-			helper.removeEvent(el, 'mouseleave', ptr.mouseleave);
-			helper.removeEvent(el, 'dragover', ptr.dragover);
-			helper.removeEvent(el, 'blur', ptr.blur);
+			helper.event.remove(el, 'keydown', ptr.keydown);
+			helper.event.remove(el, 'paste', ptr.paste);
+			helper.event.remove(el, 'mousedown', ptr.mousedown);
+			helper.event.remove(el, 'mouseup', ptr.mouseup);
+			helper.event.remove(el, 'mouseleave', ptr.mouseleave);
+			helper.event.remove(el, 'dragover', ptr.dragover);
+			helper.event.remove(el, 'blur', ptr.blur);
+
+			//helper.event.remove(el, 'liveinput', ptr.liveinput);
+
 			//helper.removeEvent(el, 'select', ptr.select);
 
 			delete heap[el.GUID];
@@ -1296,9 +1330,9 @@ var liveinput = new function () {
 			return self;
 		};
 		self.off = function(event, el, cb) {
-			eventindex = helper.indexOf(heap[el.GUID].events[event], cb);
-			if (eventindex == -1) return self;
-			heap[el.GUID].events[event].splice(eventindex, 1);
+			eventIndex = helper.indexOf(heap[el.GUID].events[event], cb);
+			if (eventIndex == -1) return self;
+			heap[el.GUID].events[event].splice(eventIndex, 1);
 			return self;
 		};
 		return self;

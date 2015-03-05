@@ -97,9 +97,9 @@ var config = {
     		//negate_iife: true,
     		drop_console: true,
     		//droop func
-    		pure_funcs: [
-                'log'
-    		],
+    		// pure_funcs: [
+                // 'console.log'
+    		// ],
     		// global definitions
     		global_defs: {
     			DEBUG: false
