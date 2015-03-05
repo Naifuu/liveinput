@@ -1187,7 +1187,6 @@ var liveinput = new function () {
 			clearTimeout(ptr.timer);
 			//console.log(Date.now())
 
-
 			data.keydown.push({
 				keyCode: e.keyCode,
 				shiftKey: e.shiftKey,
@@ -1459,7 +1458,7 @@ var liveinput = new function () {
 			}, options);
 			setLang(config);
 			var key = JSON.stringify(config);
-			var instance = cache[key] || new LiveInput(config);
+			var instance = cache[key] || (cache[key] = new LiveInput(config));
 			return instance;
 		},
 		'fio': function (options) {

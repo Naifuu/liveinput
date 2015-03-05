@@ -926,7 +926,7 @@ var liveinput = new function() {
             }, options);
             setLang(config);
             var key = JSON.stringify(config);
-            var instance = cache[key] || new LiveInput(config);
+            var instance = cache[key] || (cache[key] = new LiveInput(config));
             return instance;
         },
         fio: function(options) {
