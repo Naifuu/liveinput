@@ -1032,7 +1032,7 @@ var liveinput = new function () {
 		//processor.config();//log
 		var heap = {};
 
-		var event, eventIndex, eventCount, eventExtend = {};
+		var event, eventIndex, eventCount, eventExtend = { old: ''};
 		var callevents = function (el, events, name, ptr, arg) {
 			if (!events[name]) return;
 			event = events[name];
@@ -1043,7 +1043,7 @@ var liveinput = new function () {
 			if (eventExtend.old == el.value) return;
 			eventExtend.value = el.value;
 			helper.event.call(el, 'liveinput', eventExtend);
-			eventExtend.old = eventExtend.value;
+			//eventExtend.old = eventExtend.value;
 		};
 		//window.kb = [];
 		var onkeyup = function (e, el, data, cursor, events, ptr) {
@@ -1120,7 +1120,7 @@ var liveinput = new function () {
 			
 			callevents(el, events, 'change', ptr, [data.result.value, data.old, lang]);
 
-			data.old = el.value;
+			eventExtend.old = data.old = el.value;
 
 			//data.old = data.result.value;
 			//var copy = JSON.parse(JSON.stringify(data));//log
