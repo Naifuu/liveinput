@@ -907,6 +907,7 @@ var liveinput = new function() {
     };
     var configuration = function(config) {
         mergeConfig(types, config);
+        return self;
     };
     var cache = {};
     var types = {
