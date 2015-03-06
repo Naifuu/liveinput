@@ -184,7 +184,7 @@ var liveinput = new function() {
     var langs = [ "ru", "en" ];
     var whitelist = [ 192, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 65, 83, 68, 70, 71, 72, 74, 75, 76, 186, 222, 220, 226, 90, 88, 67, 86, 66, 78, 77, 188, 190, 191, 111, 106, 109, 107, 12 ];
     var additional = {
-        keyCodes: [ 32, 13 ],
+        keyCodes: [ 32, 13, 8 ],
         charCodes: [ 32, 10 ]
     };
     whitelist.push.apply(whitelist, additional.keyCodes);
@@ -732,9 +732,15 @@ var liveinput = new function() {
         };
         var onkeyup = function(e, el, data, cursor, events, ptr) {
             cursor.release();
-            data.before = el.value.substring(0, cursor.start);
-            data.diff = el.value.substring(cursor.start, cursor.end);
-            data.after = el.value.substring(cursor.end);
+            if (8 == e.keyCode) {
+                data.before = el.value.substring(0, cursor.end);
+                data.diff = "";
+                data.after = el.value.substring(cursor.end);
+            } else {
+                data.before = el.value.substring(0, cursor.start);
+                data.diff = el.value.substring(cursor.start, cursor.end);
+                data.after = el.value.substring(cursor.end);
+            }
             if (e.ctrlKey && hotkeymap.control[e.keyCode]) data.diff += hotkeymap.control[e.keyCode];
             data.result = preprocessor.pass({
                 before: helper.textToCodes(data.before),
@@ -845,6 +851,8 @@ var liveinput = new function() {
             return self;
         };
         self.unbind = function(el) {
+            if (!el.GUID) return;
+            if (!heap[el.GUID]) return;
             var ptr = heap[el.GUID];
             helper.event.remove(el, "keydown", ptr.keydown);
             helper.event.remove(el, "paste", ptr.paste);
@@ -855,10 +863,11 @@ var liveinput = new function() {
             helper.event.remove(el, "blur", ptr.blur);
             delete heap[el.GUID];
             delete ptr;
-            delete el.GUID;
             return self;
         };
         self.on = function(event, el, cb) {
+            if (!el.GUID) return;
+            if (!heap[el.GUID]) return;
             heap[el.GUID].events[event] = heap[el.GUID].events[event] || [];
             heap[el.GUID].events[event].push(cb);
             switch (event) {
@@ -868,6 +877,8 @@ var liveinput = new function() {
             return self;
         };
         self.off = function(event, el, cb) {
+            if (!el.GUID) return;
+            if (!heap[el.GUID]) return;
             eventIndex = helper.indexOf(heap[el.GUID].events[event], cb);
             if (eventIndex == -1) return self;
             heap[el.GUID].events[event].splice(eventIndex, 1);

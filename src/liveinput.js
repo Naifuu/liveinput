@@ -291,7 +291,7 @@ var liveinput = new function () {
 	//var blacklist = [27, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 104, 145, 19, 144, 9, 20, 16, 17, 91, 18, 92, 93, 45, 36, 33, 46, 35, 34, 37, 38, 39, 40];//, 8
 	var additional = {
 		//space(32,32)/enter(13,10)/backspace(8)
-		keyCodes: [32, 13],//, 8
+		keyCodes: [32, 13, 8],//, 8
 		charCodes: [32, 10]
 	}
 	//char 10, 13 keyCode
@@ -1068,27 +1068,27 @@ var liveinput = new function () {
 			//data.cursor = cursor.get();//log
 			 
 			//console.log('after', JSON.stringify(JSON.parse(cursor.get())));
-			//if (e.keyCode == 8) {//backspace 
-			//	data.before = cursor.text.substring(0, cursor.end);
-			//	data.diff = '';
-			//	data.after = cursor.text.substring(cursor.end);
-			//} else {
-			data.before = el.value.substring(0, cursor.start);
-			data.diff = el.value.substring(cursor.start, cursor.end);
-			//console.log(helper.charToCode(data.diff));//log
-			//console.log('onkeyup', data.diff);
+			if (e.keyCode == 8) { //backspace 	
+				data.before = el.value.substring(0, cursor.end);
+				data.diff = '';
+				data.after = el.value.substring(cursor.end);
+			} else {
+				data.before = el.value.substring(0, cursor.start);
+				data.diff = el.value.substring(cursor.start, cursor.end);
+				//console.log(helper.charToCode(data.diff));//log
+				//console.log('onkeyup', data.diff);
 
-			//var press = {};
-			//press[data.diff] = e.keyCode;
-			//press[data.diff.toLocaleUpperCase()] = e.keyCode;
+				//var press = {};
+				//press[data.diff] = e.keyCode;
+				//press[data.diff.toLocaleUpperCase()] = e.keyCode;
 
-			//window.kb.push(press);
-			//console.log(press);
+				//window.kb.push(press);
+				//console.log(press);
 
-			data.after = el.value.substring(cursor.end);
-			//}		
+				data.after = el.value.substring(cursor.end);
+			}
 
-		
+
 			if (e.ctrlKey && hotkeymap.control[e.keyCode]) {
 				data.diff += hotkeymap.control[e.keyCode];
 				//data.result.offset -= hotkeymap.control[e.keyCode].length;
@@ -1295,7 +1295,9 @@ var liveinput = new function () {
 			el.focus();
 			return self;
 		}
-		self.unbind = function(el) {
+		self.unbind = function (el) {
+			if (!el.GUID) return;
+			if (!heap[el.GUID]) return;
 			var ptr = heap[el.GUID];
 
 			helper.event.remove(el, 'keydown', ptr.keydown);
@@ -1312,10 +1314,12 @@ var liveinput = new function () {
 
 			delete heap[el.GUID];
 			delete ptr;
-			delete el.GUID;
+			//delete el.GUID;
 			return self;
 		};
-		self.on = function(event, el, cb) {
+		self.on = function (event, el, cb) {
+			if (!el.GUID) return;
+			if (!heap[el.GUID]) return;
 			heap[el.GUID].events[event] = heap[el.GUID].events[event] || [];
 			heap[el.GUID].events[event].push(cb);
 
@@ -1329,7 +1333,9 @@ var liveinput = new function () {
 			}
 			return self;
 		};
-		self.off = function(event, el, cb) {
+		self.off = function (event, el, cb) {
+			if (!el.GUID) return;
+			if (!heap[el.GUID]) return;
 			eventIndex = helper.indexOf(heap[el.GUID].events[event], cb);
 			if (eventIndex == -1) return self;
 			heap[el.GUID].events[event].splice(eventIndex, 1);
