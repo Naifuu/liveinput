@@ -1296,8 +1296,7 @@ var liveinput = new function () {
 			return self;
 		}
 		self.unbind = function (el) {
-			if (!el.GUID) return;
-			if (!heap[el.GUID]) return;
+			if (!el.GUID || !heap[el.GUID]) return self;
 			var ptr = heap[el.GUID];
 
 			helper.event.remove(el, 'keydown', ptr.keydown);
@@ -1318,8 +1317,7 @@ var liveinput = new function () {
 			return self;
 		};
 		self.on = function (event, el, cb) {
-			if (!el.GUID) return;
-			if (!heap[el.GUID]) return;
+			if (!el.GUID || !heap[el.GUID]) return self;
 			heap[el.GUID].events[event] = heap[el.GUID].events[event] || [];
 			heap[el.GUID].events[event].push(cb);
 
@@ -1334,8 +1332,7 @@ var liveinput = new function () {
 			return self;
 		};
 		self.off = function (event, el, cb) {
-			if (!el.GUID) return;
-			if (!heap[el.GUID]) return;
+			if (!el.GUID || !heap[el.GUID]) return self;
 			eventIndex = helper.indexOf(heap[el.GUID].events[event], cb);
 			if (eventIndex == -1) return self;
 			heap[el.GUID].events[event].splice(eventIndex, 1);
