@@ -73,7 +73,7 @@ var liveinput = new function () {
 				return (rnd() * 16 | 0).toString(16);
 			};
 			var guid = function() {
-				return 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.replace(/x/g, guidchar);
+				return '00000000-0000-0000-0000-000000000000'.replace(/0/g, guidchar);
 			};
 			var format = function(text, arg) {
 				for (var i = 0, l = arg.length; i < l; i++) {
@@ -182,6 +182,9 @@ var liveinput = new function () {
 			var preventDefault = function(e) {
 				e.preventDefault ? e.preventDefault() : e.returnValue = false;
 			};
+			var copy = function(obj) {
+				return JSON.parse(JSON.stringify(obj));
+			}
 			return {
 				charToCode: charToCode,
 				textToCodes: textToCodes,
@@ -206,7 +209,8 @@ var liveinput = new function () {
 					remove: removeEvent,
 					call: callEvent
 				},
-				preventDefault: preventDefault
+				preventDefault: preventDefault,
+				copy: copy
 			};
 		}
 	})();
@@ -1085,6 +1089,7 @@ var liveinput = new function () {
 		};
 		//window.kb = [];
 		var onkeyup = function (e, el, data, cursor, events, ptr) {
+			
 			//if (data.old == el.value) return;
 			//console.log('onkeyup', e.keyCode);
  
@@ -1157,8 +1162,8 @@ var liveinput = new function () {
 			
 			data.result.value = postprocessor.pass(data.result.value, data);
 			
+			el.value = data.result.value;
 			callevents(el, events, 'change', ptr, [data.result.value, data.old, lang]);
-
 			ptr.event.old = data.old = el.value;
 
 			//data.old = data.result.value;
@@ -1331,6 +1336,7 @@ var liveinput = new function () {
 			//helper.event.add(el, 'liveinput', ptr.liveinput);
 
 			//helper.addEvent(el, 'select', ptr.select);
+			refresh(el);
 		};
 		
 
@@ -1443,7 +1449,10 @@ var liveinput = new function () {
 		mergeConfig(types, config);
 		return self;
 	};
-
+	configuration.get = function(name) {
+		return helper.copy(types[name]);
+	}
+	
 	var cache = {};
 
 	var types = {
@@ -1560,35 +1569,6 @@ var liveinput = new function () {
 			}, options);
 			return init(config);
 		},
-		'place': function (options) {
-			var special = '. \'-';
-			var config = mergeConfig({
-				lang: 'ru',
-				include: {
-					numbers: false,
-					symbols: false,
-					special: special
-				},
-				regexulator: {
-					g: {
-						'after-char-remove-repeat': special,
-						'after-char-upper-char': ['\'', ''],//'' - начало строки
-						'after-chars-remove-chars': {
-							'': special
-						}
-					}
-				}
-			}, options);
-			return init(config);
-		},
-		'peopled-place': function (options) {
-			var config = mergeConfig({
-				include: {
-					numbers: true
-				}
-			}, options);
-			return init('place', config);
-		},
 		'address': function (options) {
 			var special = '-/';
 			var config = mergeConfig({
@@ -1626,86 +1606,6 @@ var liveinput = new function () {
 					g: {
 						'after-char-remove-repeat': '0',
 						'after-char-upper-char': ''
-					}
-				}
-			}, options);
-			return init(config);
-		},
-		'passport-issue': function (options) {
-			var special = '. -"№';
-			var config = mergeConfig({
-				lang: 'ru',
-				include: {
-					numbers: false,
-					symbols: false,
-					special: special
-				},
-				input: {
-					capslock: true
-				},
-				regexulator: {
-					g: {
-						'after-char-remove-repeat': special,
-						'after-chars-remove-chars': {
-							'': special
-						}
-					}
-				}
-			}, options);
-			return init(config);
-		},
-		'international-passport-issue': function (options) {
-			var special = ' -';
-			var config = mergeConfig({
-				lang: '',
-				include: {
-					numbers: false,
-					symbols: false,
-					special: special
-				},
-				input: {
-					capslock: true
-				},
-				regexulator: {
-					g: {
-						'after-char-remove-repeat': special,
-						'after-chars-remove-chars': {
-							'': special
-						}
-					}
-				}
-			}, options);
-			return init(config);
-		},
-		'international-document-serial': function (options) {
-			var config = mergeConfig({
-				lang: '',
-				include: {
-					numbers: true,
-					symbols: false
-				}
-			}, options);
-			return init(config);
-		},
-		'document-issue': function (options) {
-			var special = ' .,-/"()№\'';
-			var config = mergeConfig({
-				lang: 'ru',
-				include: {
-					numbers: true,
-					symbols: false,
-					special: special
-				},
-				input: {
-					register: 'lower',
-					capslock: true
-				},
-				regexulator: {
-					g: {
-						'after-char-remove-repeat': special,
-						'after-chars-remove-chars': {
-							'': special
-						}
 					}
 				}
 			}, options);

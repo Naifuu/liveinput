@@ -25,52 +25,53 @@
 <body>
 </body>
 <script type="text/javascript">
-	init('default');
-	init('fio', ['Фамилия', 'Имя', 'Отчество']);
-	init('numeric', 'Числовое поле');
-	init('place', 'Место рождения/Адрес');
-	init('peopled-place', 'Место рождения/Адрес - Населенный пункт');
-	init('address', 'Адрес проживания');
+	var config = { lang: 'ru' };
+	init('default', 'Default');
+	init('fio', 'FIO', config);
+	init('numeric', 'Numeric');
+	//init('place', 'Место рождения/Адрес');
+	//init('peopled-place', 'Место рождения/Адрес - Населенный пункт');
+	init('address', 'Address');
 	var month = function (current, last, lang) {
-		lang = lang || 'ru';
+		lang = lang || 'en';
 		var mouth = parseInt(current, 10);
 		return 1 <= mouth && mouth <= 12 ?
 			new Date(current).toLocaleDateString(lang, { month: 'long' }) :
 			current;
 	}
-	init('month', 'Месяц - ru', month);
-	init('month', 'Месяц - en', {lang: 'en'}, month);
-	init('passport-issue', 'Тип документа - Паспорт гражданина РФ - Кем выдан');
-	init('international-passport-issue', 'Тип документа - Заграничный паспорт гражданина РФ - Кем выдан');//, {lang: ''}
-	init('international-document-serial', 'Тип документа - -//- - Серия');//Документ, удостоверяющий личность иностранного гражданина - 
-	init('document-issue', 'Тип документа - Документ, удостоверяющий личность лица без гражданства - Кем выдан');
+	init('month', 'Month', config, month);
+	//init('month', 'Месяц - en', {lang: 'en'}, month);
+	//init('passport-issue', 'Тип документа - Паспорт гражданина РФ - Кем выдан');
+	//init('international-passport-issue', 'Тип документа - Заграничный паспорт гражданина РФ - Кем выдан');//, {lang: ''}
+	//init('international-document-serial', 'Тип документа - -//- - Серия');//Документ, удостоверяющий личность иностранного гражданина - 
+	//init('document-issue', 'Тип документа - Документ, удостоверяющий личность лица без гражданства - Кем выдан');
 	var expectedvals = [
 		//default
 		'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?',
 		//fio
 		'Апр АПР \'- \'Фыв -\'',
-		'Апр АПР \'- \'Фыв -\'',
-		'Апр АПР \'- \'Фыв -\'',
+		//'Апр АПР \'- \'Фыв -\'',
+		//'Апр АПР \'- \'Фыв -\'',
 		//numeric
 		'123',
 		//place
-		'Апр АПР \'- \'Фыв -\'.',
+		//'Апр АПР \'- \'Фыв -\'.',
 		//peopled-place
-		'Апр АПР 123 \'- \'Фыв -\'.',
+		//'Апр АПР 123 \'- \'Фыв -\'.',
 		//address
 		'ASDASDАПРАПР123-ASDФЫВ-/',
 		//month
-		'АпрАПР123фыв',
+		'АпрАПР123фыв'//,
 		//month (configured)
-		'AsdASD123asd',
+		//'AsdASD123asd',
 		//passport-issue
-		'апр АПР - фыв -."',
+		//'апр АПР - фыв -."',
 		//international-passport-issue
-		'asd ASD апр АПР - asdфыв -',
+		//'asd ASD апр АПР - asdфыв -',
 		//international-document-serial
-		'asdASDапрАПР123asdфыв',
+		//'asdASDапрАПР123asdфыв',
 		//document-issue
-		'апр апр 123 \'- \'фыв -()\',./"'
+		//'апр апр 123 \'- \'фыв -()\',./"'
 	];
 	var passed = false;
 
@@ -80,10 +81,9 @@
 
 	for (var i = 0, l = inputs.length; i < l; i++) {
 		passed = inputs[i].value == expectedvals[i];
-		if(!passed) break;
+		if (!passed) throw new Error('Test is failed');
 	}
 
-	if (!passed) throw new Error('Test is failed');
 	console.log('Test complete!');
 
 </script>

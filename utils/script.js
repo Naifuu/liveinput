@@ -11,10 +11,10 @@ var drawHtml = function (name, els, validators, config) {//<br/>
 	html+='</legend>';
 	if (config) html += '<code>var config = ' + JSON.stringify(config, null, 2) + ';</code>';
 	for (var i = 0, l = els.length; i < l; i++) {
+		if (validators[i]) html += '<code>var validator = ' + validators[i] + ';</code>';
 		if (name != els[i]) {
 			html += '<label for="' + els[i] + 'Input">' + els[i] + ': </label>';
 		}
-		if (validators[i]) html += '<code>' + validators[i] + '</code>';
 		html += '<input type="text" id="' + els[i] + 'Input"/>';
 	}
 	html += '</fieldset>';
@@ -25,10 +25,11 @@ var isArray = function (arg) {
 };
 var bind = function (instance, el, validator) {
 	el.value = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\'\,./:"|<>?{}[]';//{}[] не поддерживаются
-	instance.bind(el);
-	instance.on('change', el, function (current, last, lang) {
-		el.value = validator ? validator(current, last, lang) : current;
-	});
+	instance
+		.bind(el)
+		.on('change', el, function(current, last, lang) {
+			this.el.value = validator ? validator(current, last, lang) : current;
+		});
 };
 var init = function (name, els, validators, config) {
 	els = els || [name];
