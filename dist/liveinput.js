@@ -872,7 +872,7 @@ var liveinput = new function() {
             helper.event.add(el, "mouseleave", ptr.mouseleave);
             helper.event.add(el, "dragover", ptr.dragover);
             helper.event.add(el, "blur", ptr.blur);
-            refresh(el);
+            el.focus();
         };
         self.bind = function() {
             for (var i = 0, l = arguments.length; i < l; i++) bind(arguments[i]);

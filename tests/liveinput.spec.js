@@ -67,18 +67,18 @@
 	beforeEach(before);
 	afterEach(after);
 
-	it('default', function (done) {
-		var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
-		var output = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?';
-		var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
-		initLiveinput('default').then(function (value) {
-			console.log('default done', value);
-			expect(value).toBe(output);
-			expect(value).not.toBe(input);
-			done();
-		});
-		uit(uitConfig).print(input);
-	});
+	//it('default', function (done) {
+	//	var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
+	//	var output = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?';
+	//	var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
+	//	initLiveinput('default').then(function (value) {
+	//		console.log('default done', value);
+	//		expect(value).toBe(output);
+	//		expect(value).not.toBe(input);
+	//		done();
+	//	});
+	//	uit(uitConfig).print(input);
+	//});
 
 	it('fio', function (done) {
 		var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
@@ -106,30 +106,30 @@
 		uit(uitConfig).print(input);
 	});
 
-	it('place', function (done) {
-		var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
-		var output = 'Фыв ФЫВ апр АПР э- эфывфыв -Ёэ.БЮХЪхъ';
-		var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
-		initLiveinput('place').then(function (value) {
-			console.log('place done', value);
-			expect(value).toBe(output);
-			done();
-		});
-		uit(uitConfig).print(input);
-	});
+	//it('place', function (done) {
+	//	var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
+	//	var output = 'Фыв ФЫВ апр АПР э- эфывфыв -Ёэ.БЮХЪхъ';
+	//	var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
+	//	initLiveinput('place').then(function (value) {
+	//		console.log('place done', value);
+	//		expect(value).toBe(output);
+	//		done();
+	//	});
+	//	uit(uitConfig).print(input);
+	//});
 
-	it('peopled-place', function (done) {
-		var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
-		var output = 'Фыв ФЫВ апр АПР 123 э- эфывфыв -Ёэ.БЮХЪхъ';
-		var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
-		initLiveinput('peopled-place').then(function (value) {
-			console.log('peopled-place done', value);
-			expect(value).toBe(output);
-			expect(value).not.toBe(input);
-			done();
-		});
-		uit(uitConfig).print(input);
-	});
+	//it('peopled-place', function (done) {
+	//	var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
+	//	var output = 'Фыв ФЫВ апр АПР 123 э- эфывфыв -Ёэ.БЮХЪхъ';
+	//	var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
+	//	initLiveinput('peopled-place').then(function (value) {
+	//		console.log('peopled-place done', value);
+	//		expect(value).toBe(output);
+	//		expect(value).not.toBe(input);
+	//		done();
+	//	});
+	//	uit(uitConfig).print(input);
+	//});
 
 	it('address', function (done) {
 		var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
@@ -157,56 +157,56 @@
 		uit(uitConfig).print(input);
 	});
 
-	it('passport-issue', function (done) {
-		var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
-		var output = 'фыв фыв апр апр "э- эфывфыв -ё"№э."бюхъхъ';
-		var uitConfig = { lang: 'ru', shift: false };
-		initLiveinput('passport-issue').then(function (value) {
-			console.log('passport-issue done', value);
-			expect(value).toBe(output);
-			done();
-		});
-		uit(uitConfig).print(input);
-	});
+	//it('passport-issue', function (done) {
+	//	var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
+	//	var output = 'фыв фыв апр апр "э- эфывфыв -ё"№э."бюхъхъ';
+	//	var uitConfig = { lang: 'ru', shift: false };
+	//	initLiveinput('passport-issue').then(function (value) {
+	//		console.log('passport-issue done', value);
+	//		expect(value).toBe(output);
+	//		done();
+	//	});
+	//	uit(uitConfig).print(input);
+	//});
 
-	it('international-passport-issue', function (done) {
-		var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
-		var output = 'asd asd апр апр - asdфыв -';
-		var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
-		initLiveinput('international-passport-issue').then(function (value) {
-			console.log('international-passport-issue done', value);
-			expect(value).toBe(output);
-			expect(value).not.toBe(input);
-			done();
-		});
-		uit(uitConfig).print(input);
-	});
+	//it('international-passport-issue', function (done) {
+	//	var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
+	//	var output = 'asd asd апр апр - asdфыв -';
+	//	var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
+	//	initLiveinput('international-passport-issue').then(function (value) {
+	//		console.log('international-passport-issue done', value);
+	//		expect(value).toBe(output);
+	//		expect(value).not.toBe(input);
+	//		done();
+	//	});
+	//	uit(uitConfig).print(input);
+	//});
 
-	it('international-document-serial', function (done) {
-		var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
-		var output = 'asdASDапрАПР123asdфыв';
-		var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
-		initLiveinput('international-document-serial').then(function (value) {
-			console.log('international-document-serial done', value);
-			expect(value).toBe(output);
-			expect(value).not.toBe(input);
-			done();
-		});
-		uit(uitConfig).print(input);
-	});
+	//it('international-document-serial', function (done) {
+	//	var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
+	//	var output = 'asdASDапрАПР123asdфыв';
+	//	var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
+	//	initLiveinput('international-document-serial').then(function (value) {
+	//		console.log('international-document-serial done', value);
+	//		expect(value).toBe(output);
+	//		expect(value).not.toBe(input);
+	//		done();
+	//	});
+	//	uit(uitConfig).print(input);
+	//});
 
-	it('document-issue', function (done) {
-		var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
-		var output = 'фыв фыв апр апр 123 "э- эфывфыв -ё"№()э,./"/бюхъхъ';
-		var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
-		initLiveinput('document-issue').then(function (value) {
-			console.log('document-issue done', value);
-			expect(value).toBe(output);
-			expect(value).not.toBe(input);
-			done();
-		});
-		uit(uitConfig).print(input);
-	});
+	//it('document-issue', function (done) {
+	//	var input = 'asd ASD апр АПР 123 @\'- \'asdфыв -=~!@#$%^&*()_+;\',./:"|<>?{}[]';
+	//	var output = 'фыв фыв апр апр 123 "э- эфывфыв -ё"№()э,./"/бюхъхъ';
+	//	var uitConfig = { lang: 'ru', shift: false, control: false, alt: false };
+	//	initLiveinput('document-issue').then(function (value) {
+	//		console.log('document-issue done', value);
+	//		expect(value).toBe(output);
+	//		expect(value).not.toBe(input);
+	//		done();
+	//	});
+	//	uit(uitConfig).print(input);
+	//});
 
 	it('control+2', function (done) {
 		var uitConfig = { lang: 'ru', shift: false, control: true, alt: false };

@@ -1112,8 +1112,7 @@ var liveinput = new function () {
 			//data.cursor = cursor.get();//log
 			 
 			//console.log('after', JSON.stringify(JSON.parse(cursor.get())));
-			if (e.keyCode == 8) { //backspace 	
-				
+			if (e.keyCode == 8) { //backspace 		
 				data.before = el.value.substring(0, cursor.end);
 				data.diff = '';
 				data.after = el.value.substring(cursor.end);
@@ -1336,7 +1335,8 @@ var liveinput = new function () {
 			//helper.event.add(el, 'liveinput', ptr.liveinput);
 
 			//helper.addEvent(el, 'select', ptr.select);
-			refresh(el);
+			el.focus();
+			//refresh(el);
 		};
 		
 
