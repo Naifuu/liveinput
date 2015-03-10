@@ -48,6 +48,6 @@ var init = function (name, els, validators, config) {
 	}
 }
 
-window.onload = function() {
-	document.body.querySelector('input').focus();
+window.onload = function () {
+	document.getElementsByTagName('input')[0].focus();
 }

@@ -1,14 +1,17 @@
 {
   "name": "liveinput",
-  "main":[
-	  "dist/liveinput.js",
-	  "dist/liveinput.min.js",
-	  "dist/liveinput.min.js.gz",
-	  "dist/liveinput.min.js.map"
+  "main": [
+    "dist/liveinput.js",
+    "dist/liveinput.min.js",
+    "dist/liveinput.min.js.gz",
+    "dist/liveinput.min.js.map"
   ],
   "ignore": [
     ".jshintrc",
     "**/*.txt"
   ],
-  "homepage": "https://github.com/vahpetr/liveinput"
+  "homepage": "https://github.com/vahpetr/liveinput",
+  "dependencies": {
+    "json3": "https://github.com/bestiejs/json3"
+  }
 }

@@ -1,6 +1,6 @@
 /**
  * liveinput - Input text auto changer
- * @version v1.0.3
+ * @version v1.0.4
  * @link https://github.com/vahpetr/liveinput/
  * @license Apache-2.0
  */
@@ -75,23 +75,31 @@ var liveinput = new function() {
                 return res;
             };
             var getSelectionStart = function(el) {
-                if (el.createTextRange) {
-                    var r = document.selection.createRange().duplicate();
-                    r.moveEnd("character", el.value.length);
-                    if ("" == r.text) return el.value.length;
-                    return el.value.lastIndexOf(r.text);
-                } else return el.selectionStart;
+                if (el.selectionStart) return el.selectionStart;
+                var r = document.selection.createRange().duplicate();
+                r.moveEnd("character", el.value.length);
+                if ("" == r.text) return el.value.length;
+                return el.value.lastIndexOf(r.text);
             };
             var getSelectionEnd = function(el) {
-                if (el.createTextRange) {
-                    var r = document.selection.createRange().duplicate();
-                    r.moveStart("character", -el.value.length);
-                    return r.text.length;
-                } else return el.selectionEnd;
+                if (el.selectionEnd) return el.selectionEnd;
+                var range = document.selection.createRange();
+                var end = -1;
+                if (el.value.indexOf("\r") < 0) {
+                    var startRange = el.document.body.createTextRange();
+                    startRange.moveToElementText(el);
+                    if (!range.compareEndPoints("endToEnd", startRange)) end++;
+                }
+                end -= range.moveEnd("character", -el.value.length);
+                var pos = -1;
+                do {
+                    pos = element.value.indexOf("\r", pos + 1);
+                    if (pos >= 0 && end > pos) end++;
+                } while (pos >= 0 && pos < end);
+                return end;
             };
             var setCaretPosition = function(el, pos) {
                 if (el.setSelectionRange) return el.setSelectionRange(pos.start, pos.end);
-                if (!el.createTextRange) return;
                 var range = el.createTextRange();
                 range.collapse(true);
                 range.moveStart("character", pos.start);
@@ -120,7 +128,14 @@ var liveinput = new function() {
                 }
                 e = document.createEventObject();
                 extend(e, obj);
-                el.fireEvent("on" + event, e);
+                setTimeout(function() {
+                    try {
+                        el.fireEvent("on" + event, e);
+                    } catch (ex) {}
+                }, 0);
+            };
+            var preventDefault = function(e) {
+                e.preventDefault ? e.preventDefault() : e.returnValue = false;
             };
             return {
                 charToCode: charToCode,
@@ -144,7 +159,8 @@ var liveinput = new function() {
                     add: addEvent,
                     remove: removeEvent,
                     call: callEvent
-                }
+                },
+                preventDefault: preventDefault
             };
         }();
     }();
@@ -773,11 +789,11 @@ var liveinput = new function() {
                 return false;
 
               case 89:
-                e.preventDefault();
+                helper.preventDefault(e);
                 return false;
             }
             if (data.mousedown) {
-                e.preventDefault();
+                helper.preventDefault(e);
                 return false;
             }
             if (helper.indexOf(whitelist, e.keyCode) == -1) {
@@ -792,15 +808,15 @@ var liveinput = new function() {
             });
             if (!ptr.timer) cursor.press();
             ptr.timer = setTimeout(function() {
-                onkeyup(e, el, data, cursor, events, ptr);
+                onkeyup(data.keydown[data.keydown.length - 1], el, data, cursor, events, ptr);
             }, interval);
             if (e.ctrlKey && helper.indexOf(hotkey.control, e.keyCode) != -1) {
-                e.preventDefault();
+                helper.preventDefault(e);
                 return false;
             }
             return true;
         };
-        self.bind = function(el) {
+        var bind = function(el) {
             if (!el.GUID) el.GUID = helper.GUID();
             var ptr = heap[el.GUID] = {};
             ptr.el = el;
@@ -824,7 +840,7 @@ var liveinput = new function() {
                 return true;
             };
             ptr.dragover = function(e) {
-                e.preventDefault();
+                helper.preventDefault(e);
                 return false;
             };
             ptr.mousedown = function() {
@@ -847,7 +863,9 @@ var liveinput = new function() {
             helper.event.add(el, "mouseleave", ptr.mouseleave);
             helper.event.add(el, "dragover", ptr.dragover);
             helper.event.add(el, "blur", ptr.blur);
-            el.focus();
+        };
+        self.bind = function() {
+            for (var i = 0, l = arguments.length; i < l; i++) bind(arguments[i]);
             return self;
         };
         self.unbind = function(el) {
@@ -860,8 +878,16 @@ var liveinput = new function() {
             helper.event.remove(el, "mouseleave", ptr.mouseleave);
             helper.event.remove(el, "dragover", ptr.dragover);
             helper.event.remove(el, "blur", ptr.blur);
+            var events = ptr.events;
+            for (var name in events) {
+                events[name].length = 0;
+                delete events[name];
+            }
             delete heap[el.GUID];
-            delete ptr;
+            if (!helper.getOwnPropertyNames(heap).length) {
+                var key = JSON.stringify(config);
+                delete cache[key];
+            }
             return self;
         };
         self.on = function(event, el, cb) {

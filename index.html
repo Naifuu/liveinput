@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 	<title>Liveinput component</title>
 	<meta name="author" content="vahpetr">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
 	<script src="src/liveinput.js"></script>
 	<script src="utils/script.js"></script>
 	<style type="text/css">
@@ -73,7 +74,7 @@
 	];
 	var passed = false;
 
-	var inputs = document.body.querySelectorAll('input');
+	var inputs = document.getElementsByTagName('input');
 
 	if (inputs.length != expectedvals.length) throw new Error('Test not configured');
 

@@ -88,30 +88,60 @@ var liveinput = new function () {
 				}
 				return res;
 			}
+			
 			var getSelectionStart = function (el) {
-				if (el.createTextRange) {
-					var r = document.selection.createRange().duplicate();
-					r.moveEnd('character', el.value.length);
-					if (r.text == '') return el.value.length;
-					return el.value.lastIndexOf(r.text);
-				} else return el.selectionStart;
+				if (el.selectionEnd != undefined) return el.selectionStart;
+
+				//var r = document.selection.createRange().duplicate();
+				//r.moveEnd('character', el.value.length);
+				//if (r.text == '') return el.value.length;
+				//return el.value.lastIndexOf(r.text);
+
+				//bug в старых браузерах положение каретки пока не работает
+
+				var range = document.selection.createRange();
+				var startRange = el.createTextRange();
+				startRange.moveToBookmark(range.getBookmark());
+				var endRange = el.createTextRange();
+				endRange.collapse(false);
+				var len = el.value.length;
+				if (startRange.compareEndPoints('StartToEnd', endRange) > -1) return len;
+				var start = -startRange.moveStart('character', -len);
+				var value = el.value.replace(/\r\n/g, '\n');
+				start += value.slice(0, start).split('\n').length - 1;
+				return start;
 			};
 			var getSelectionEnd = function (el) {
-				if (el.createTextRange) {
-					var r = document.selection.createRange().duplicate();
-					r.moveStart('character', -el.value.length);
-					return r.text.length;
-				} else return el.selectionEnd;
+				if (el.selectionEnd != undefined) return el.selectionEnd;
+
+				//var r = document.selection.createRange().duplicate();
+				//r.moveStart('character', -el.value.length);
+				//console.log('getSelectionEnd character r.text.length', r.text.length);
+				//return r.text.length;
+
+				//bug в старых браузерах положение каретки пока не работает
+
+				var range = document.selection.createRange();
+				var startRange = el.createTextRange();
+				startRange.moveToBookmark(range.getBookmark());
+				var endRange = el.createTextRange();
+				endRange.collapse(false);
+				var len = el.value.length;
+				if (startRange.compareEndPoints('StartToEnd', endRange) > -1) return len;
+				var value = el.value.replace(/\r\n/g, '\n');
+				var end = -startRange.moveEnd('character', -len);
+				end += value.slice(0, end).split('\n').length - 1;
+				return end;
 			};
 			var setCaretPosition = function (el, pos) {
 				//el.focus();
-				if (el.setSelectionRange)
-					return el.setSelectionRange(pos.start, pos.end);
-				if (!el.createTextRange) return;
+				if (el.setSelectionRange) return el.setSelectionRange(pos.start, pos.end);
+				//if (!el.createTextRange) return;
 				var range = el.createTextRange();
 				range.collapse(true);
 				range.moveStart('character', pos.start);
-				range.moveEnd('character', pos.end);
+				range.moveEnd('character', pos.end - pos.start);
+				//range.move('character', pos.start);
 				range.select();
 			}
 			var getOwnPropertyNames = function(obj) {
@@ -136,13 +166,21 @@ var liveinput = new function () {
 				if (document.createEvent) {
 					e = document.createEvent('HTMLEvents');
 					extend(e, obj);
-					e.initEvent(event, false, false);
+					e.initEvent(event, false, false);// event type,bubbling,cancelable
 					return el.dispatchEvent(e);
-				}
-				//if (!document.createEventObject) return;
-				e = document.createEventObject();
+				}// else if (!document.createEventObject) return;
+				e = document.createEventObject();//window.event
 				extend(e, obj);
-				el.fireEvent('on' + event, e);
+				setTimeout(function() {
+					try {
+						el.fireEvent('on' + event, e);
+					} catch (ex) {
+
+					} 
+				}, 0);
+			};
+			var preventDefault = function(e) {
+				e.preventDefault ? e.preventDefault() : e.returnValue = false;
 			};
 			return {
 				charToCode: charToCode,
@@ -167,7 +205,8 @@ var liveinput = new function () {
 					add: addEvent,
 					remove: removeEvent,
 					call: callEvent
-				}
+				},
+				preventDefault: preventDefault
 			};
 		}
 	})();
@@ -254,32 +293,32 @@ var liveinput = new function () {
 
 		// //http://stackoverflow.com/questions/4928586/get-caret-position-in-html-input
 		// if (!document.selection) return;
-		// var range = document.selection.createRange();
+		 //var range = document.selection.createRange();
 
-		// //var len = el.value.length
-		// //range.moveStart ('character', -len);
-		// //var start = range.text.length;
+		 ////var len = el.value.length
+		 ////range.moveStart ('character', -len);
+		 ////var start = range.text.length;
 
-		// // Create a working TextRange that lives only in the input
-		// var startRange = el.createTextRange();
-		// startRange.moveToBookmark(range.getBookmark());
-		// // Check if the start and end of the selection are at the very end
-		// // of the input, since moveStart/moveEnd doesn't return what we want
-		// // in those cases
-		// var endRange = el.createTextRange();
-		// endRange.collapse(false);
-		// var start = 0;
-		// var end = 0;
-		// var len = el.value.length;
-		// if (startRange.compareEndPoints("StartToEnd", endRange) > -1) {
-		// start = end = len;
-		// }	
-		// start = -startRange.moveStart("character", -len);
-		// var value = el.value.replace(/\r\n/g, '\n');
-		// start += value.slice(0, start).split("\n").length - 1;
-		// end = -startRange.moveEnd("character", -len);
-		// end += value.slice(0, end).split("\n").length - 1;
-		// return { start: start, end: end };
+		 //// Create a working TextRange that lives only in the input
+		 //var startRange = el.createTextRange();
+		 //startRange.moveToBookmark(range.getBookmark());
+		 //// Check if the start and end of the selection are at the very end
+		 //// of the input, since moveStart/moveEnd doesn't return what we want
+		 //// in those cases
+		 //var endRange = el.createTextRange();
+		 //endRange.collapse(false);
+		 //var start = 0;
+		 //var end = 0;
+		 //var len = el.value.length;
+		 //if (startRange.compareEndPoints("StartToEnd", endRange) > -1) {
+		 //start = end = len;
+		 //}	
+		 //start = -startRange.moveStart("character", -len);
+		 //var value = el.value.replace(/\r\n/g, '\n');
+		 //start += value.slice(0, start).split("\n").length - 1;
+		 //end = -startRange.moveEnd("character", -len);
+		 //end += value.slice(0, end).split("\n").length - 1;
+		 //return { start: start, end: end };
 		// }
 	};
 
@@ -816,11 +855,11 @@ var liveinput = new function () {
 						if (find.length == 1) {
 							str = '';
 						} else {
-							str = find[0];
+							str = find.charAt(0);
 						}
-						if (!data.keydown.length) return str + find[find.length - 1].toLocaleUpperCase();
-						if (data.keydown[noffset].shiftKey) return str + find[find.length - 1].toLowerCase();
-						return str + find[find.length - 1].toLocaleUpperCase();
+						if (!data.keydown.length) return str + find.charAt(find.length - 1).toLocaleUpperCase();
+						if (data.keydown[noffset].shiftKey) return str + find.charAt(find.length - 1).toLowerCase();
+						return str + find.charAt(find.length - 1).toLocaleUpperCase();
 					}
 				}
 			}
@@ -1069,6 +1108,7 @@ var liveinput = new function () {
 			 
 			//console.log('after', JSON.stringify(JSON.parse(cursor.get())));
 			if (e.keyCode == 8) { //backspace 	
+				
 				data.before = el.value.substring(0, cursor.end);
 				data.diff = '';
 				data.after = el.value.substring(cursor.end);
@@ -1099,12 +1139,12 @@ var liveinput = new function () {
 			//	ptr.timer = null;
 			//	return true;
 			//}
-
+			
 			data.result = preprocessor.pass({
 				before: helper.textToCodes(data.before),
 				diff: helper.textToCodes(data.diff),
 				after: helper.textToCodes(data.after),
-				offset: e.ctrlKey && -data.diff.length || 0
+				offset: e.ctrlKey && -data.diff.length || e.keyCode == 8 ? 1 : 0
 			}, data);		
 
 			//var press = {
@@ -1165,7 +1205,7 @@ var liveinput = new function () {
 						return false;
 					//bug добавить специфическую обработку, refresh(el) не работает, буква вовращается после
 					case 89: //Control+Y
-						e.preventDefault();
+						helper.preventDefault(e);
 						return false;
 					default:
 						break;
@@ -1173,7 +1213,7 @@ var liveinput = new function () {
 			}
 
 			if (data.mousedown ) {
-				e.preventDefault();
+				helper.preventDefault(e);
 				return false;
 			}
 			//TODO сделать список клавишь при нажатии на которые срабатывает refresh
@@ -1199,11 +1239,11 @@ var liveinput = new function () {
 			}
 
 			ptr.timer = setTimeout(function() {
-				onkeyup(e, el, data, cursor, events, ptr);
+				onkeyup(data.keydown[data.keydown.length-1], el, data, cursor, events, ptr);
 			}, interval);
  
 			if (e.ctrlKey && helper.indexOf(hotkey.control, e.keyCode) != -1) {
-				e.preventDefault();
+				helper.preventDefault(e);
 				return false;
 			}
 			 
@@ -1215,7 +1255,7 @@ var liveinput = new function () {
 		//	return true;
 		//};
 
-		self.bind = function(el) {
+		var bind = function(el) {
 			if (!el.GUID) {
 				el.GUID = helper.GUID();
 			}
@@ -1232,29 +1272,29 @@ var liveinput = new function () {
 			var data = ptr.data;
 			var cursor = ptr.data.cursor = ptr.cursor;
 			var events = ptr.events = {};
-			ptr.keydown = function (e) {
+			ptr.keydown = function(e) {
 				//console.log('keydown', e.keyCode);
 				onkeydown(e, el, data, cursor, events, ptr);
 			};
-			ptr.paste = function (e) {
+			ptr.paste = function(e) {
 				//console.log('paste');
 				//onpaste(e, data);
 				data.keydown = [];
 				return true;
 			};
-			ptr.dragover = function (e) {
+			ptr.dragover = function(e) {
 				//console.log('dragover');
-				e.preventDefault();
+				helper.preventDefault(e);
 				return false;
 			}
-			ptr.mousedown = function () {
+			ptr.mousedown = function() {
 				//console.log('onmousedown');
 				ptr.data.mousedown = true;
 				//if (ptr.timer) return;
 				refresh(el);
 				//cursor.press();
 			}
-			ptr.mouseup = function () {
+			ptr.mouseup = function() {
 				//console.log('onmouseup');
 				ptr.data.mousedown = false;
 				//if (ptr.timer) return;
@@ -1265,11 +1305,11 @@ var liveinput = new function () {
 				//console.log('onmouseleave');
 				ptr.data.mousedown = false;
 			}
-			ptr.blur = function () {
+			ptr.blur = function() {
 				//console.log('blur');
-				
+
 				//if (ptr.timer)
-					refresh(el);
+				refresh(el);
 			}
 			//ptr.select = function () {
 			//	//console.log('select');
@@ -1291,8 +1331,15 @@ var liveinput = new function () {
 			//helper.event.add(el, 'liveinput', ptr.liveinput);
 
 			//helper.addEvent(el, 'select', ptr.select);
+		};
+		
 
-			el.focus();
+		self.bind = function() {
+			for (var i = 0, l = arguments.length; i < l; i++) {
+				bind(arguments[i]);
+			}
+			//TODO закомментил на время теста
+			//el.focus();
 			return self;
 		}
 		self.unbind = function (el) {
@@ -1311,9 +1358,24 @@ var liveinput = new function () {
 
 			//helper.removeEvent(el, 'select', ptr.select);
 
+			var events = ptr.events;
+			// ReSharper disable once MissingHasOwnPropertyInForeach
+			for (var name in events) {
+				events[name].length = 0;
+				delete events[name];
+			}
+
 			delete heap[el.GUID];
-			delete ptr;
+			//delete ptr;
 			//delete el.GUID;
+
+			//TODO dispose instance
+			if (!helper.getOwnPropertyNames(heap).length) {
+				var key = JSON.stringify(config);
+				// ReSharper disable once VariableUsedInInnerScopeBeforeDeclared
+				delete cache[key];
+			}
+
 			return self;
 		};
 		self.on = function (event, el, cb) {

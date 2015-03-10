@@ -1,13 +1,13 @@
 {
   "name": "liveinput",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Input text auto changer",
   "author": "Vasilev Pyotr",
   "homepage": "https://github.com/vahpetr/liveinput/",
   "main": "dist/liveinput.js",
   "keywords": [
     "input",
-	"auto change"
+    "auto change"
   ],
   "repository": {
     "type": "git",
