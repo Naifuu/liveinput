@@ -1,6 +1,6 @@
 /**
  * liveinput - Input text auto changer
- * @version v1.0.4
+ * @version v1.0.5
  * @link https://github.com/vahpetr/liveinput/
  * @license Apache-2.0
  */
@@ -75,27 +75,31 @@ var liveinput = new function() {
                 return res;
             };
             var getSelectionStart = function(el) {
-                if (el.selectionStart) return el.selectionStart;
-                var r = document.selection.createRange().duplicate();
-                r.moveEnd("character", el.value.length);
-                if ("" == r.text) return el.value.length;
-                return el.value.lastIndexOf(r.text);
+                if (void 0 != el.selectionEnd) return el.selectionStart;
+                var range = document.selection.createRange();
+                var startRange = el.createTextRange();
+                startRange.moveToBookmark(range.getBookmark());
+                var endRange = el.createTextRange();
+                endRange.collapse(false);
+                var len = el.value.length;
+                if (startRange.compareEndPoints("StartToEnd", endRange) > -1) return len;
+                var start = -startRange.moveStart("character", -len);
+                var value = el.value.replace(/\r\n/g, "\n");
+                start += value.slice(0, start).split("\n").length - 1;
+                return start;
             };
             var getSelectionEnd = function(el) {
-                if (el.selectionEnd) return el.selectionEnd;
+                if (void 0 != el.selectionEnd) return el.selectionEnd;
                 var range = document.selection.createRange();
-                var end = -1;
-                if (el.value.indexOf("\r") < 0) {
-                    var startRange = el.document.body.createTextRange();
-                    startRange.moveToElementText(el);
-                    if (!range.compareEndPoints("endToEnd", startRange)) end++;
-                }
-                end -= range.moveEnd("character", -el.value.length);
-                var pos = -1;
-                do {
-                    pos = element.value.indexOf("\r", pos + 1);
-                    if (pos >= 0 && end > pos) end++;
-                } while (pos >= 0 && pos < end);
+                var startRange = el.createTextRange();
+                startRange.moveToBookmark(range.getBookmark());
+                var endRange = el.createTextRange();
+                endRange.collapse(false);
+                var len = el.value.length;
+                if (startRange.compareEndPoints("StartToEnd", endRange) > -1) return len;
+                var value = el.value.replace(/\r\n/g, "\n");
+                var end = -startRange.moveEnd("character", -len);
+                end += value.slice(0, end).split("\n").length - 1;
                 return end;
             };
             var setCaretPosition = function(el, pos) {
@@ -103,7 +107,7 @@ var liveinput = new function() {
                 var range = el.createTextRange();
                 range.collapse(true);
                 range.moveStart("character", pos.start);
-                range.moveEnd("character", pos.end);
+                range.moveEnd("character", pos.end - pos.start);
                 range.select();
             };
             var getOwnPropertyNames = function(obj) {
@@ -594,10 +598,10 @@ var liveinput = new function() {
             for (var j = 0, k = arr.length; j < k; j++) obj[arr[j]] = {
                 expr: "[a-zа-яё]",
                 replacer: function(find, c, offset, str, data, noffset) {
-                    if (1 == find.length) str = ""; else str = find[0];
-                    if (!data.keydown.length) return str + find[find.length - 1].toLocaleUpperCase();
-                    if (data.keydown[noffset].shiftKey) return str + find[find.length - 1].toLowerCase();
-                    return str + find[find.length - 1].toLocaleUpperCase();
+                    if (1 == find.length) str = ""; else str = find.charAt(0);
+                    if (!data.keydown.length) return str + find.charAt(find.length - 1).toLocaleUpperCase();
+                    if (data.keydown[noffset].shiftKey) return str + find.charAt(find.length - 1).toLowerCase();
+                    return str + find.charAt(find.length - 1).toLocaleUpperCase();
                 }
             };
             handler["after-char-replace-expr"](obj, "after-char-replace-expr", flag);
@@ -762,7 +766,7 @@ var liveinput = new function() {
                 before: helper.textToCodes(data.before),
                 diff: helper.textToCodes(data.diff),
                 after: helper.textToCodes(data.after),
-                offset: e.ctrlKey && -data.diff.length || 0
+                offset: e.ctrlKey && -data.diff.length || 8 == e.keyCode ? 1 : 0
             }, data);
             data.result.value = data.result.before + data.result.diff + data.result.after;
             data.result.value = postprocessor.pass(data.result.value, data);
