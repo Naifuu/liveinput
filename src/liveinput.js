@@ -1,40 +1,40 @@
 ﻿
-var liveinput = new function () {
+var liveinput = new function() {
 	var helper = (function() {
 		return new function() {
 			var rnd = Math.random;
-			var bind = Function.prototype.bind ? function (func, thisArg) {
+			var bind = Function.prototype.bind ? function(func, thisArg) {
 				return func.bind(thisArg);
-			} : function (func, thisArg) {
+			} : function(func, thisArg) {
 				var slice = Array.prototype.slice, args = slice.call(arguments, 2);
 				return function() {
 					return func.apply(thisArg, args.concat(slice.call(arguments)));
 				}
 			};
-			var extrude = function (thisArg) {
+			var extrude = function(thisArg) {
 				return bind(Function.prototype.call, thisArg);
 			}
-			var filter = Array.prototype.filter ? extrude(Array.prototype.filter) : function (arr, cb) {
+			var filter = Array.prototype.filter ? extrude(Array.prototype.filter) : function(arr, cb) {
 				var res = [], i, l;
 				for (i = 0, l = arr.length; i < l; i++) {
 					if (cb(arr[i], i, arr)) res.push(arr[i]);
 				}
 				return res;
 			};
-			var map = Array.prototype.map ? extrude(Array.prototype.map) : function (arr, cb) {
+			var map = Array.prototype.map ? extrude(Array.prototype.map) : function(arr, cb) {
 				var res = [], i, l;
 				for (i = 0, l = arr.length; i < l; i++) {
 					res.push(cb(arr[i], i, arr));
 				}
 				return res;
 			}
-			var forEach = Array.prototype.forEach ? extrude(Array.prototype.forEach) : function (arr, cb) {
+			var forEach = Array.prototype.forEach ? extrude(Array.prototype.forEach) : function(arr, cb) {
 				for (var i = 0, l = arr.length; i < l; i++) {
 					cb(arr[i], i, arr);
 				}
 			};
-			var indexOf = Array.prototype.indexOf ? extrude(Array.prototype.indexOf) : function (arr, v) {
-				var  i, l;
+			var indexOf = Array.prototype.indexOf ? extrude(Array.prototype.indexOf) : function(arr, v) {
+				var i, l;
 				for (i = 0, l = arr.length; i < l; i++) {
 					if (arr[i] == v) return i;
 				}
@@ -54,7 +54,7 @@ var liveinput = new function () {
 			//var codeToChar =  function(code) {
 			//	return String.fromCharCode(code);
 			//};
-			var codesToText = function (codes) {
+			var codesToText = function(codes) {
 				return String.fromCharCode.apply(undefined, codes); //map(codes, codeToChar).join('');
 			};
 			var addEvent = function(el, event, cb) {
@@ -88,8 +88,8 @@ var liveinput = new function () {
 				}
 				return res;
 			}
-			
-			var getSelectionStart = function (el) {
+
+			var getSelectionStart = function(el) {
 				if (el.selectionEnd != undefined) return el.selectionStart;
 
 				//var r = document.selection.createRange().duplicate();
@@ -111,7 +111,7 @@ var liveinput = new function () {
 				start += value.slice(0, start).split('\n').length - 1;
 				return start;
 			};
-			var getSelectionEnd = function (el) {
+			var getSelectionEnd = function(el) {
 				if (el.selectionEnd != undefined) return el.selectionEnd;
 
 				//var r = document.selection.createRange().duplicate();
@@ -133,7 +133,7 @@ var liveinput = new function () {
 				end += value.slice(0, end).split('\n').length - 1;
 				return end;
 			};
-			var setCaretPosition = function (el, pos) {
+			var setCaretPosition = function(el, pos) {
 				//el.focus();
 				if (el.setSelectionRange) return el.setSelectionRange(pos.start, pos.end);
 				//if (!el.createTextRange) return;
@@ -146,37 +146,38 @@ var liveinput = new function () {
 			}
 			var getOwnPropertyNames = function(obj) {
 				var props = [];
-				for (var p in obj) if (obj.hasOwnProperty(p)) {
-					props.push(p);
-				}
+				for (var p in obj)
+					if (obj.hasOwnProperty(p)) {
+						props.push(p);
+					}
 				return props;
 			}
-			var isArray = Array.isArray || function (arg) {
+			var isArray = Array.isArray || function(arg) {
 				return Object.prototype.toString.call(arg) === '[object Array]';
 			};
-			var extend = function(a,b) {
+			var extend = function(a, b) {
 				if (!b) return;
 				// ReSharper disable once MissingHasOwnPropertyInForeach
 				for (var p in b) {
 					a[p] = b[p];
 				}
 			}
-			var callEvent = function (el, event, obj) {
+			var callEvent = function(el, event, obj) {
 				var e;
 				if (document.createEvent) {
 					e = document.createEvent('HTMLEvents');
 					extend(e, obj);
-					e.initEvent(event, false, false);// event type,bubbling,cancelable
+					e.initEvent(event, false, false); // event type,bubbling,cancelable
 					return el.dispatchEvent(e);
-				}// else if (!document.createEventObject) return;
-				e = document.createEventObject();//window.event
+				} // else if (!document.createEventObject) return;
+				e = document.createEventObject(); //window.event
 				extend(e, obj);
 				setTimeout(function() {
 					try {
 						el.fireEvent('on' + event, e);
 					} catch (ex) {
 
-					} 
+					}
 				}, 0);
 			};
 			var preventDefault = function(e) {
@@ -229,7 +230,7 @@ var liveinput = new function () {
 
 		//var marker = {};
 
-		self.press = function () {
+		self.press = function() {
 			self.end = self.start = helper.getSelectionStart(el);
 			//console.log('press', self.start);
 			//data.start = helper.getSelectionStart(el);
@@ -237,7 +238,7 @@ var liveinput = new function () {
 			//self.text = data.text = el.value;
 			//self.end = max(data.start, data.end);
 		};
-		self.release = function () {
+		self.release = function() {
 			self.end = helper.getSelectionEnd(el);
 			//console.log('release', self.end);
 			//self.start = data.oldStart = data.start;
@@ -245,7 +246,7 @@ var liveinput = new function () {
 			//data.oldText = data.text;
 			//self.end = min(data.start, data.end);
 		};
-		self.change = function () {
+		self.change = function() {
 			self.start = helper.getSelectionStart(el);
 			self.end = helper.getSelectionEnd(el);
 			//console.log('change', self.start, self.end);
@@ -259,11 +260,11 @@ var liveinput = new function () {
 		//	helper.setCaretPosition(el, marker);
 		//};
 		var maxpos;
-		self.move = function (offset) {
-			
+		self.move = function(offset) {
+
 			//self.start = data.start - offset;
 			//self.end = self.start;
-			
+
 			maxpos = max(self.start - offset, self.end - offset);
 			//console.log('move', maxpos);
 			helper.setCaretPosition(el, {
@@ -272,7 +273,7 @@ var liveinput = new function () {
 			});
 			self.press();
 		};
-		self.refresh = function () {
+		self.refresh = function() {
 			helper.setCaretPosition(el, {
 				start: 0,
 				end: el.value.length
@@ -297,49 +298,49 @@ var liveinput = new function () {
 
 		// //http://stackoverflow.com/questions/4928586/get-caret-position-in-html-input
 		// if (!document.selection) return;
-		 //var range = document.selection.createRange();
+		//var range = document.selection.createRange();
 
-		 ////var len = el.value.length
-		 ////range.moveStart ('character', -len);
-		 ////var start = range.text.length;
+		////var len = el.value.length
+		////range.moveStart ('character', -len);
+		////var start = range.text.length;
 
-		 //// Create a working TextRange that lives only in the input
-		 //var startRange = el.createTextRange();
-		 //startRange.moveToBookmark(range.getBookmark());
-		 //// Check if the start and end of the selection are at the very end
-		 //// of the input, since moveStart/moveEnd doesn't return what we want
-		 //// in those cases
-		 //var endRange = el.createTextRange();
-		 //endRange.collapse(false);
-		 //var start = 0;
-		 //var end = 0;
-		 //var len = el.value.length;
-		 //if (startRange.compareEndPoints("StartToEnd", endRange) > -1) {
-		 //start = end = len;
-		 //}	
-		 //start = -startRange.moveStart("character", -len);
-		 //var value = el.value.replace(/\r\n/g, '\n');
-		 //start += value.slice(0, start).split("\n").length - 1;
-		 //end = -startRange.moveEnd("character", -len);
-		 //end += value.slice(0, end).split("\n").length - 1;
-		 //return { start: start, end: end };
+		//// Create a working TextRange that lives only in the input
+		//var startRange = el.createTextRange();
+		//startRange.moveToBookmark(range.getBookmark());
+		//// Check if the start and end of the selection are at the very end
+		//// of the input, since moveStart/moveEnd doesn't return what we want
+		//// in those cases
+		//var endRange = el.createTextRange();
+		//endRange.collapse(false);
+		//var start = 0;
+		//var end = 0;
+		//var len = el.value.length;
+		//if (startRange.compareEndPoints("StartToEnd", endRange) > -1) {
+		//start = end = len;
+		//}	
+		//start = -startRange.moveStart("character", -len);
+		//var value = el.value.replace(/\r\n/g, '\n');
+		//start += value.slice(0, start).split("\n").length - 1;
+		//end = -startRange.moveEnd("character", -len);
+		//end += value.slice(0, end).split("\n").length - 1;
+		//return { start: start, end: end };
 		// }
 	};
 
 	//var log = console.log.bind(console); //var forEach = Function.prototype.call.bind(Array.prototype.forEach); forEach([1, 2, 3], log);
-	
+
 	//TODO добавил язык - добавь во все комманды кейкоды языка
 	var langs = ['ru', 'en'];
 	var whitelist = [192, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 65, 83, 68, 70, 71, 72, 74, 75, 76, 186, 222, 220, 226, 90, 88, 67, 86, 66, 78, 77, 188, 190, 191, 111, 106, 109, 107, 12]; //, 8, 45, 36, 33, 35, 34, 37, 38, 39, 40
 	//var blacklist = [27, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 104, 145, 19, 144, 9, 20, 16, 17, 91, 18, 92, 93, 45, 36, 33, 46, 35, 34, 37, 38, 39, 40];//, 8
 	var additional = {
 		//space(32,32)/enter(13,10)/backspace(8)
-		keyCodes: [32, 13, 8],//, 8
-		charCodes: [32, 10]
+		keyCodes: [32, 13, 8], //, 8
+		charCodes: [32, 10, 8]
 	}
 	//char 10, 13 keyCode
 	whitelist.push.apply(whitelist, additional.keyCodes);
-	
+
 	var hotkeymap = {
 		control: {
 			50: '@',
@@ -356,7 +357,7 @@ var liveinput = new function () {
 	var parseCode = function(code) {
 		return parseInt(code, 10);
 	}
-	var keymapper = function (map) {
+	var keymapper = function(map) {
 		//console.log('keymapper', map);
 		var props = helper.getOwnPropertyNames(map);
 		//console.log('keymapper', props);
@@ -372,9 +373,9 @@ var liveinput = new function () {
 		var self = this;
 		self.type = type;
 		var lang = config.lang;
-		
+
 		var map = {
-			ru: [1105, 1081, 1094, 1091, 1082, 1077, 1085, 1075, 1096, 1097, 1079, 1092, 1099, 1074, 1072, 1087, 1088, 1086, 1083, 1076, 1103, 1095, 1089, 1084, 1080, 1090, 1100, 1025, 1049, 1062, 1059, 1050, 1045, 1053, 1043, 1064, 1065, 1047, 1060, 1067, 1042, 1040, 1055, 1056, 1054, 1051, 1044, 1071, 1063, 1057, 1052, 1048, 1058, 1068, 1093, 1098, 92, 49, 51, 53, 56, 57, 48, 45, 61, 1061, 1066, 47, 33, 8470, 37, 42, 40, 41, 95, 43],//[]{} 192,91,221,123
+			ru: [1105, 1081, 1094, 1091, 1082, 1077, 1085, 1075, 1096, 1097, 1079, 1092, 1099, 1074, 1072, 1087, 1088, 1086, 1083, 1076, 1103, 1095, 1089, 1084, 1080, 1090, 1100, 1025, 1049, 1062, 1059, 1050, 1045, 1053, 1043, 1064, 1065, 1047, 1060, 1067, 1042, 1040, 1055, 1056, 1054, 1051, 1044, 1071, 1063, 1057, 1052, 1048, 1058, 1068, 1093, 1098, 92, 49, 51, 53, 56, 57, 48, 45, 61, 1061, 1066, 47, 33, 8470, 37, 42, 40, 41, 95, 43], //[]{} 192,91,221,123
 			en: [96, 113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 97, 115, 100, 102, 103, 104, 106, 107, 108, 122, 120, 99, 118, 98, 110, 109, 126, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 90, 88, 67, 86, 66, 78, 77, 91, 93, 92, 49, 51, 53, 56, 57, 48, 45, 61, 123, 125, 124, 33, 35, 37, 42, 40, 41, 95, 43]
 		};
 		// ReSharper disable once MissingHasOwnPropertyInForeach
@@ -436,12 +437,12 @@ var liveinput = new function () {
 			]
 		};
 		var special = {
-			50: 64,//@
-			51: 35,//#
-			52: 36,//$
-			53: 37,//%
-			54: 94,//^
-			222: 39//'
+			50: 64, //@
+			51: 35, //#
+			52: 36, //$
+			53: 37, //%
+			54: 94, //^
+			222: 39 //'
 		}
 
 		var convert = {};
@@ -550,7 +551,7 @@ var liveinput = new function () {
 				presets.splice(index, 1);
 			});
 		}
-		
+
 		var map = {
 			ru: [
 				1092, 1099, 1074, 1072, 1087, 1088, 1086, 1083, 1076, 1081, 1094, 1091, 1082, 1077, 1085, 1075, 1096, 1097, 1079, 1103, 1095, 1089, 1084, 1080, 1090, 1100, 1093, 1098, 1078, 1101, 1073, 1102, 1105, //low
@@ -635,7 +636,7 @@ var liveinput = new function () {
 
 		return self;
 	};
-	command.input = function (config, type) {
+	command.input = function(config, type) {
 		var self = this;
 		self.type = type;
 		var lang = config.lang;
@@ -654,10 +655,10 @@ var liveinput = new function () {
 		var sources = lang ? [lang] : langs;
 		var findhere = helper.except(helper.getOwnPropertyNames(map[sources[0]]), [register])[0];
 		var sequence = ['register', 'capslock'];
-		var i, l, j, k = sources.length, index, diff, added, right, wrong, length, m, n = sequence.length;		
+		var i, l, j, k = sources.length, index, diff, added, right, wrong, length, m, n = sequence.length;
 
 		var handler = {};
-		handler.register = function (compute, data) {
+		handler.register = function(compute, data) {
 			//if (data.hotkey) return compute;//  || data.copypast?
 			diff = compute.diff;
 			length = diff.length;
@@ -678,8 +679,8 @@ var liveinput = new function () {
 			compute.offset += length - compute.diff.length;
 			return compute;
 		}
-		handler.capslock = function (compute, data) {
-			if (!data.keydown.length) return compute;//?//data.copypast || 
+		handler.capslock = function(compute, data) {
+			if (!data.keydown.length) return compute; //?//data.copypast || 
 			diff = compute.diff;
 			length = diff.length;
 			var result = [];
@@ -707,7 +708,7 @@ var liveinput = new function () {
 			return compute;
 		}
 
-		self.exec = function (compute, data) {
+		self.exec = function(compute, data) {
 			var result = compute;
 			for (m = 0; m < n; m++) {
 				if (!config[sequence[m]]) continue;
@@ -767,69 +768,69 @@ var liveinput = new function () {
 			'\'': '\\\'',
 			'': '^'
 		}
-		var removes = {}, interceptions = {}, regexeRemoves = [], regexeInterceptions =[], i, l, m, n;
+		var removes = {}, interceptions = {}, regexeRemoves = [], regexeInterceptions = [], i, l, m, n;
 
-		var mapping = function (c) { return map[c] || c; };
-		var char = function (text) {
+		var mapping = function(c) { return map[c] || c; };
+		var char = function(text) {
 			var chars = text.split('');
 			if (!chars.length) {
 				chars.push('');
 			}
 			return helper.map(chars, mapping);
 		}
-		var chars = function (val) {
+		var chars = function(val) {
 			return [char(val).join('|')];
 		}
-		var term = function (val) {
+		var term = function(val) {
 			return [char(val).join('')];
 		}
-		var template = function (name, arr) {
+		var template = function(name, arr) {
 			return helper.format(templates[name], arr);
 		}
 
 		var handler = {};
-		handler['after-chars-remove-chars'] = function (config, name, flag) {
+		handler['after-chars-remove-chars'] = function(config, name, flag) {
 			// ReSharper disable once MissingHasOwnPropertyInForeach
 			for (var text in config) {
-				helper.forEach(chars(text), function (param) {
-					helper.forEach(chars(config[text]), function (secondparam) {
+				helper.forEach(chars(text), function(param) {
+					helper.forEach(chars(config[text]), function(secondparam) {
 						removes[flag].push(template(name, [param, secondparam]));
 					});
 				});
 			}
 		};
-		handler['after-chars-remove-term'] = function (config, name, flag) {
+		handler['after-chars-remove-term'] = function(config, name, flag) {
 			// ReSharper disable once MissingHasOwnPropertyInForeach
 			for (var text in config) {
-				helper.forEach(chars(text), function (param) {
-					helper.forEach(term(config[text]), function (secondparam) {
+				helper.forEach(chars(text), function(param) {
+					helper.forEach(term(config[text]), function(secondparam) {
 						removes[flag].push(template(name, [param, secondparam]));
 					});
 				});
 			}
 		};
-		handler['after-term-remove-chars'] = function (config, name, flag) {
+		handler['after-term-remove-chars'] = function(config, name, flag) {
 			// ReSharper disable once MissingHasOwnPropertyInForeach
 			for (var text in config) {
-				helper.forEach(term(text), function (param) {
-					helper.forEach(chars(config[text]), function (secondparam) {
+				helper.forEach(term(text), function(param) {
+					helper.forEach(chars(config[text]), function(secondparam) {
 						removes[flag].push(template(name, [param, secondparam]));
 					});
 				});
 			}
 		};
-		handler['after-term-remove-term'] = function (config, name, flag) {
+		handler['after-term-remove-term'] = function(config, name, flag) {
 			// ReSharper disable once MissingHasOwnPropertyInForeach
 			for (var text in config) {
-				helper.forEach(term(text), function (param) {
-					helper.forEach(term(config[text]), function (secondparam) {
+				helper.forEach(term(text), function(param) {
+					helper.forEach(term(config[text]), function(secondparam) {
 						removes[flag].push(template(name, [param, secondparam]));
 					});
 				});
 			}
 		};
-		handler['after-char-remove-repeat'] = function (config, name, flag) {
-			helper.forEach(char(config),function (param) {
+		handler['after-char-remove-repeat'] = function(config, name, flag) {
+			helper.forEach(char(config), function(param) {
 				removes[flag].push(template(name, [param, param]));
 			});
 		};
@@ -837,10 +838,10 @@ var liveinput = new function () {
 		handler['before-chars-remove-term'] = handler['after-chars-remove-term'];
 		handler['before-term-remove-chars'] = handler['after-term-remove-chars'];
 		handler['before-term-remove-term'] = handler['after-term-remove-term'];
-		handler['after-char-replace-expr'] = function (config, name, flag) {
+		handler['after-char-replace-expr'] = function(config, name, flag) {
 			// ReSharper disable once MissingHasOwnPropertyInForeach
 			for (var text in config) {
-				helper.forEach(char(text), function(param) { 
+				helper.forEach(char(text), function(param) {
 					interceptions[flag].push({
 						expr: template(name, [param, config[text].expr]),
 						replacer: config[text].replacer
@@ -848,14 +849,14 @@ var liveinput = new function () {
 				});
 			}
 		};
-		handler['after-char-upper-char'] = function (config, name, flag) {
+		handler['after-char-upper-char'] = function(config, name, flag) {
 			var obj = {};
 			var arr = helper.isArray(config) ? config : [config];
 			for (var j = 0, k = arr.length; j < k; j++) {
 				obj[arr[j]] = {
 					expr: '[a-zа-яё]',
-					replacer: function (find, c, offset, str, data, noffset) {
-						
+					replacer: function(find, c, offset, str, data, noffset) {
+
 						if (find.length == 1) {
 							str = '';
 						} else {
@@ -869,10 +870,10 @@ var liveinput = new function () {
 			}
 			handler['after-char-replace-expr'](obj, 'after-char-replace-expr', flag);
 		};
-		handler['after-term-replace-expr'] = function (config, name, flag) {
+		handler['after-term-replace-expr'] = function(config, name, flag) {
 			// ReSharper disable once MissingHasOwnPropertyInForeach
 			for (var text in config) {
-				helper.forEach(term(text), function (param) {
+				helper.forEach(term(text), function(param) {
 					interceptions[flag].push({
 						expr: template(name, [param, config[text].expr]),
 						replacer: config[text].replacer
@@ -891,33 +892,31 @@ var liveinput = new function () {
 
 			helper.forEach(
 				//TODO сортируем очередь выполнения
-			[
-				'after-chars-remove-chars',
-				'after-term-remove-chars',
-				'after-chars-remove-term',
-				'after-term-remove-term',
-
-				'before-chars-remove-chars',
-				'before-term-remove-chars',
-				'before-chars-remove-term',
-				'before-term-remove-term',
-
-				'after-char-replace-expr',
-				'after-term-replace-expr',
-				'after-char-remove-repeat',
-				'after-char-upper-char'
-			],function (name) { 
-				if (config[flag][name] == undefined) return;
-				handler[name](config[flag][name], name, flag);
-			});
+				[
+					'after-chars-remove-chars',
+					'after-term-remove-chars',
+					'after-chars-remove-term',
+					'after-term-remove-term',
+					'before-chars-remove-chars',
+					'before-term-remove-chars',
+					'before-chars-remove-term',
+					'before-term-remove-term',
+					'after-char-replace-expr',
+					'after-term-replace-expr',
+					'after-char-remove-repeat',
+					'after-char-upper-char'
+				], function(name) {
+					if (config[flag][name] == undefined) return;
+					handler[name](config[flag][name], name, flag);
+				});
 		}
-		 
+
 		// ReSharper disable once MissingHasOwnPropertyInForeach
 		for (flag in removes) {
 			if (!removes[flag].length) continue;;
 			regexeRemoves.push({
 				expr: new RegExp(removes[flag].join('|'), flag),
-				replacer: helper.fill(removes[flag].length, function (i) { return '$' + (i + 1) }).join('')
+				replacer: helper.fill(removes[flag].length, function(i) { return '$' + (i + 1) }).join('')
 			});
 		}
 
@@ -933,7 +932,7 @@ var liveinput = new function () {
 				replacer: interceptions[flag][0].replacer
 			});
 		}
-		 
+
 		//console.log(regexeRemoves, regexeInterceptions);
 		var find, c, offset, str;
 		var parseArgs = function(args) {
@@ -954,13 +953,13 @@ var liveinput = new function () {
 			}
 			for (i = 0, l = regexeInterceptions.length; i < l; i++) {
 				//if (data.keydown.length)
-				text = text.replace(regexeInterceptions[i].expr, function () {
+				text = text.replace(regexeInterceptions[i].expr, function() {
 					//if (!data.keydown.length) return find;
 					parseArgs(arguments);
 					//console.log(offset);
 					//console.log(data.before.length, data.diff.length, data.after.length, offset, data.cursor.start, data.cursor.end);//log		
-					if (data.cursor.start <= offset + 1  && offset + 1  <= data.cursor.end) {
-						n = data.before.length + data.diff.length - offset - find.length;// + data.after.length
+					if (data.cursor.start <= offset + 1 && offset + 1 <= data.cursor.end) {
+						n = data.before.length + data.diff.length - offset - find.length; // + data.after.length
 						if (!data.keydown[n]) {
 							n = 0;
 						}
@@ -1003,6 +1002,13 @@ var liveinput = new function () {
 		
 		self.pass = function(compute, data) {
 			result = compute;
+			//TODO remove noop
+			for (i = 0, j = data.keydown.length; i < j; i++) {
+				if (data.keydown[i].keyCode != 8) continue;//backspace
+				//debugger
+				data.keydown.splice(i, 1);
+				result.diff.splice(i, 1);
+			}
 			for (i = 0; i < l; i++) {
 				result = processes[i].exec(result, data);
 				//result.type = processes[i].type;//log
@@ -1025,7 +1031,7 @@ var liveinput = new function () {
 		}
 		return self;
 	};
-	var Postprocessor = function (config) {
+	var Postprocessor = function(config) {
 		var self = this;
 		var i, l, result, processes = [], length;
 		var sequence = ['regexulator'];
@@ -1042,7 +1048,7 @@ var liveinput = new function () {
 		}
 		l = processes.length;
 
-		self.pass = function (text, data) {
+		self.pass = function(text, data) {
 			result = text;
 			length = result.length;
 			for (i = 0; i < l; i++) {
@@ -1053,7 +1059,7 @@ var liveinput = new function () {
 			data.result.offset += length - result.length;
 			return result;
 		};
-		self.config = function () {
+		self.config = function() {
 			var cfg = {}, info;
 			for (i = 0; i < l; i++) {
 				info = processes[i].get();
@@ -1067,7 +1073,7 @@ var liveinput = new function () {
 
 	// ReSharper disable once InconsistentNaming
 	var LiveInput = function(config) {
-		var self = this; 
+		var self = this;
 		var lang = config.lang;
 		var interval = config.interval;
 		var preprocessor = new Preprocessor(config);
@@ -1075,24 +1081,26 @@ var liveinput = new function () {
 		//processor.config();//log
 		var heap = {};
 
+		var callEvent = function(el, name, event) {
+			if (event.old == el.value) return;
+			event.value = el.value;
+			helper.event.call(el, 'liveinput', event);
+		};
 		var event, eventIndex, eventCount;
-		var callevents = function (el, events, name, ptr, arg) {
+		var callevents = function(el, events, name, ptr, arg) {
 			if (!events[name]) return;
 			event = events[name];
 			for (eventIndex = 0, eventCount = event.length; eventIndex < eventCount; eventIndex++) {
 				event[eventIndex].apply(ptr, arg);
 			}
-			if (name != 'change') return;
-			if (ptr.event.old == el.value) return;
-			ptr.event.value = el.value;
-			helper.event.call(el, 'liveinput', ptr.event);
+			if (name == 'change') callEvent(el, 'liveinput', ptr.event);		
 		};
 		//window.kb = [];
-		var onkeyup = function (e, el, data, cursor, events, ptr) {
-			
+		var onkeyup = function(e, el, data, cursor, events, ptr) {
+
 			//if (data.old == el.value) return;
 			//console.log('onkeyup', e.keyCode);
- 
+
 			//if (whitelist.indexOf(e.keyCode) == -1) return true;
 
 			//data.log = [];//log
@@ -1104,13 +1112,17 @@ var liveinput = new function () {
 			//data.shift = e.shiftKey && !data.copypast;
 			//data.control = e.ctrlKey && !data.copypast;
 			//data.alt = e.altKey && !data.copypast;
-			
+
 			//console.log('before', JSON.parse(JSON.stringify(cursor)));
 			//cursor.update();
 			cursor.release();
 			//console.log('after', JSON.parse(JSON.stringify(cursor)));
 			//data.cursor = cursor.get();//log
-			 
+
+			//if (e.keyCode == 8) {
+			//	debugger
+			//}
+
 			//console.log('after', JSON.stringify(JSON.parse(cursor.get())));
 			if (e.keyCode == 8) { //backspace 		
 				data.before = el.value.substring(0, cursor.end);
@@ -1143,13 +1155,15 @@ var liveinput = new function () {
 			//	ptr.timer = null;
 			//	return true;
 			//}
-			
+
+			console.log(e.keyCode, cursor.start, cursor.end);
+
 			data.result = preprocessor.pass({
 				before: helper.textToCodes(data.before),
 				diff: helper.textToCodes(data.diff),
 				after: helper.textToCodes(data.after),
-				offset: e.ctrlKey && -data.diff.length || e.keyCode == 8 ? 1 : 0
-			}, data);		
+				offset: e.ctrlKey ? -data.diff.length : e.keyCode == 8 && cursor.start == cursor.end + 1 ? 1 : 0
+			}, data);
 
 			//var press = {
 			//	keyCode: e.keyCode,
@@ -1158,9 +1172,9 @@ var liveinput = new function () {
 			//console.log(press);
 
 			data.result.value = data.result.before + data.result.diff + data.result.after;
-			
+
 			data.result.value = postprocessor.pass(data.result.value, data);
-			
+
 			el.value = data.result.value;
 			callevents(el, events, 'change', ptr, [data.result.value, data.old, lang]);
 			ptr.event.old = data.old = el.value;
@@ -1180,21 +1194,21 @@ var liveinput = new function () {
 			return true;
 		};
 
-		var refresh = function (el) {
+		var refresh = function(el) {
 			if (!el.value.length) return;
 			var ptr = heap[el.GUID];
 			clearTimeout(ptr.timer);
 			//ptr.cursor.save();
 			if (!ptr.timer) {
 				ptr.cursor.refresh();
-			}				
+			}
 			onkeyup({
 				keyCode: whitelist[0]
 			}, el, ptr.data, ptr.cursor, ptr.events, ptr);
 			//ptr.cursor.load();
 		}
 
-		var onkeydown = function (e, el, data, cursor, events, ptr) {
+		var onkeydown = function(e, el, data, cursor, events, ptr) {
 			//console.log(e.keyCode);
 			//data.copypast = false;
 
@@ -1204,19 +1218,29 @@ var liveinput = new function () {
 			//}
 			if (e.ctrlKey) {
 				switch (e.keyCode) {
-					case 90: //Control+Z
-					case 67: //Control+C
-						return false;
-					//bug добавить специфическую обработку, refresh(el) не работает, буква вовращается после
-					case 89: //Control+Y
-						helper.preventDefault(e);
-						return false;
-					default:
-						break;
+				case 90: //Control+Z
+				case 67: //Control+C
+					return false;
+				//bug добавить специфическую обработку, refresh(el) не работает, буква вовращается после
+				case 89: //Control+Y
+					helper.preventDefault(e);
+					return false;
+				default:
+					break;
 				}
 			}
 
-			if (data.mousedown ) {
+			//switch (e.keyCode) {
+			//	case 8: //backspace
+			//		debugger
+			//		callevents(el, events, 'change', ptr, [el.value, data.old, lang]);
+			//		ptr.event.old = data.old = el.value;
+			//		return false;
+			//	default:
+			//		break;
+			//}
+
+			if (data.mousedown) {
 				helper.preventDefault(e);
 				return false;
 			}
@@ -1226,7 +1250,7 @@ var liveinput = new function () {
 					refresh(el);
 				return false;
 			}
-			
+
 			clearTimeout(ptr.timer);
 			//console.log(Date.now())
 
@@ -1243,14 +1267,14 @@ var liveinput = new function () {
 			}
 
 			ptr.timer = setTimeout(function() {
-				onkeyup(data.keydown[data.keydown.length-1], el, data, cursor, events, ptr);
+				onkeyup(data.keydown[data.keydown.length - 1], el, data, cursor, events, ptr);
 			}, interval);
- 
+
 			if (e.ctrlKey && helper.indexOf(hotkey.control, e.keyCode) != -1) {
 				helper.preventDefault(e);
 				return false;
 			}
-			 
+
 			return true;
 		};
 		//var onpaste = function(e, data) {
@@ -1272,7 +1296,6 @@ var liveinput = new function () {
 				old: ''
 			};
 			ptr.cursor = new Cursor(el);
-			//ptr.cursor.refresh(el);
 			var data = ptr.data;
 			var cursor = ptr.data.cursor = ptr.cursor;
 			var events = ptr.events = {};
@@ -1282,7 +1305,6 @@ var liveinput = new function () {
 			};
 			ptr.paste = function(e) {
 				//console.log('paste');
-				//onpaste(e, data);
 				data.keydown = [];
 				return true;
 			};
@@ -1294,16 +1316,11 @@ var liveinput = new function () {
 			ptr.mousedown = function() {
 				//console.log('onmousedown');
 				ptr.data.mousedown = true;
-				//if (ptr.timer) return;
 				refresh(el);
-				//cursor.press();
 			}
 			ptr.mouseup = function() {
 				//console.log('onmouseup');
 				ptr.data.mousedown = false;
-				//if (ptr.timer) return;
-				//cursor.release();
-				//refresh(el);
 			}
 			ptr.mouseleave = function() {
 				//console.log('onmouseleave');
@@ -1311,19 +1328,9 @@ var liveinput = new function () {
 			}
 			ptr.blur = function() {
 				//console.log('blur');
-
-				//if (ptr.timer)
 				refresh(el);
 			}
-			//ptr.select = function () {
-			//	//console.log('select');
 
-			//	//if (ptr.timer)
-			//	refresh(el);
-			//}
-			//ptr.liveinput = function(e) {
-
-			//};
 			helper.event.add(el, 'keydown', ptr.keydown);
 			helper.event.add(el, 'paste', ptr.paste);
 			helper.event.add(el, 'mousedown', ptr.mousedown);
@@ -1331,25 +1338,13 @@ var liveinput = new function () {
 			helper.event.add(el, 'mouseleave', ptr.mouseleave);
 			helper.event.add(el, 'dragover', ptr.dragover);
 			helper.event.add(el, 'blur', ptr.blur);
-
-			//helper.event.add(el, 'liveinput', ptr.liveinput);
-
-			//helper.addEvent(el, 'select', ptr.select);
-			el.focus();
-			//refresh(el);
-		};
-		
-
-		self.bind = function() {
-			for (var i = 0, l = arguments.length; i < l; i++) {
-				bind(arguments[i]);
-			}
-			//TODO закомментил на время теста
+			
+			//TODO избавиться от фокуса в пользу рефреша
 			//el.focus();
-			return self;
-		}
-		self.unbind = function (el) {
-			if (!el.GUID || !heap[el.GUID]) return self;
+			refresh(el);
+		};
+		var unbind = function (el) {
+			if (!el.GUID || !heap[el.GUID]) return;
 			var ptr = heap[el.GUID];
 
 			helper.event.remove(el, 'keydown', ptr.keydown);
@@ -1360,10 +1355,6 @@ var liveinput = new function () {
 			helper.event.remove(el, 'dragover', ptr.dragover);
 			helper.event.remove(el, 'blur', ptr.blur);
 
-			//helper.event.remove(el, 'liveinput', ptr.liveinput);
-
-			//helper.removeEvent(el, 'select', ptr.select);
-
 			var events = ptr.events;
 			// ReSharper disable once MissingHasOwnPropertyInForeach
 			for (var name in events) {
@@ -1371,9 +1362,13 @@ var liveinput = new function () {
 				delete events[name];
 			}
 
+			var props = helper.getOwnPropertyNames(ptr);
+			// ReSharper disable once MissingHasOwnPropertyInForeach
+			for (var prop in props) {
+				delete ptr[prop];
+			}
+
 			delete heap[el.GUID];
-			//delete ptr;
-			//delete el.GUID;
 
 			//TODO dispose instance
 			if (!helper.getOwnPropertyNames(heap).length) {
@@ -1381,10 +1376,21 @@ var liveinput = new function () {
 				// ReSharper disable once VariableUsedInInnerScopeBeforeDeclared
 				delete cache[key];
 			}
+		};
 
+		self.bind = function() {
+			for (var i = 0, l = arguments.length; i < l; i++) {
+				bind(arguments[i]);
+			}
+			return self;
+		}
+		self.unbind = function() {
+			for (var i = 0, l = arguments.length; i < l; i++) {
+				unbind(arguments[i]);
+			}
 			return self;
 		};
-		self.on = function (event, el, cb) {
+		self.on = function(event, el, cb) {
 			if (!el.GUID || !heap[el.GUID]) return self;
 			heap[el.GUID].events[event] = heap[el.GUID].events[event] || [];
 			heap[el.GUID].events[event].push(cb);
@@ -1399,13 +1405,17 @@ var liveinput = new function () {
 			}
 			return self;
 		};
-		self.off = function (event, el, cb) {
+		self.off = function(event, el, cb) {
 			if (!el.GUID || !heap[el.GUID]) return self;
 			eventIndex = helper.indexOf(heap[el.GUID].events[event], cb);
 			if (eventIndex == -1) return self;
 			heap[el.GUID].events[event].splice(eventIndex, 1);
 			return self;
 		};
+		self.refresh = function(el) {
+			if (!heap[el.GUID]) return;
+			refresh(el);
+		}
 		return self;
 	};
 
@@ -1423,7 +1433,7 @@ var liveinput = new function () {
 		}
 	};
 	var mergeConfig = function(a, b) {
-		if(!b) return a;
+		if (!b) return a;
 		// ReSharper disable once MissingHasOwnPropertyInForeach
 		for (var p in b) {
 			if (typeof a[p] == 'object') {
@@ -1434,113 +1444,89 @@ var liveinput = new function () {
 		}
 		return a;
 	};
-
-	var init = function (name, options) {
-		if (typeof name == 'object' || typeof name == 'undefined') {
-			options = name;
-			name = 'default';
-		}
-		if (!types[name]) {
-			throw new Error('Can not find liveinput type ' + name);
-		}
-		return types[name](options);
-	};
-	var configuration = function (config) {
-		mergeConfig(types, config);
-		return self;
-	};
-	configuration.get = function(name) {
-		return helper.copy(types[name]);
-	}
 	
 	var cache = {};
 
 	var types = {
-		'default': function (options) {
-			//var special = ' `-=~!@#$%^&*()_+;\'\,./:"|<>?';//{}[]
-			var config = mergeConfig({
-				//язык ru/en
-				lang: '',
-				interval: 0,//1,
-				//отвечает за перевод одного языка в другой
-				layout: true,
-				//отвечает за разрешённые символы
-				include: {
-					//буквы
-					chars: true,
-					//цифры
-					numbers: true,
-					//символы
-					symbols: true,
-					//произвольный список разрещённых символов
-					special: ''
-				},
-				//отвечает за запрет символов
-				exclude: {
-					//список запрещённых символов
-					special: '{}[]'
-				},
-				//Отвечает за правила ввода
-				input: {
-					//lower/upper
-					register: '',
-					//отвечает за игнорирование CapsLock'а
-					capslock: false
-				},
-				//отвечает за регулярные выражения
-				//remove-chars-after-chars, remove repeat
-				regexulator: {
-					//flag: g - multi search; i - ignore case; m - multi lines
-					g: {
-						////после любого из символов удалить повторы
-						//'after-char-remove-repeat': special,
-						////после любого из символов поднять символы
-						//'after-char-upper-char': '\'',//['\'', ''],//'' - начало строки
-						////после любого из символов удаляет символы
-						//'after-chars-remove-chars': {
-						//	'': special
-						//}
-						////после слова удаляет символы
-						//'after-term-remove-chars': {
-						//	'имя': '0123456789'
-						//},
-						////после любого из символов удаляет слово
-						//'after-chars-remove-term': {
-						//	'0123456789': '№'
-						//},
-						////после слова удаляет слова
-						//'after-term-remove-term': {
-						//	'из': 'в',
-						//	'да': 'нет'
-						//},
-						////перед любым из символов удаляет символы
-						////before поддерживает всё тоже что и after
-						//'before-chars-remove-chars': {
-						//	'№': '0123456789'
-						//},
-						////реализует тоже самое что и after-chars-upper-char но для кавычек
-						//'after-char-replace-expr': {
-						//	'"': {
-						//		//регулярное выражение
-						//		expr: '[a-za-яё]',
-						//		//функция замены
-						//		replacer: function(find, c, offset, text, data, noffset) {
-						//			return find[0] + find[1].toLocaleUpperCase();
-						//		}
-						//	}
-						//}
-					}
+		'default': {
+			//язык ru/en
+			lang: '',
+			interval: 0, //1,
+			//отвечает за перевод одного языка в другой
+			layout: true,
+			//отвечает за разрешённые символы
+			include: {
+				//буквы
+				chars: true,
+				//цифры
+				numbers: true,
+				//символы
+				symbols: true,
+				//произвольный список разрещённых символов
+				special: ''
+			},
+			//отвечает за запрет символов
+			exclude: {
+				//список запрещённых символов
+				special: '{}[]'
+			},
+			//Отвечает за правила ввода
+			input: {
+				//lower/upper
+				register: '',
+				//отвечает за игнорирование CapsLock'а
+				capslock: false
+			},
+			//отвечает за регулярные выражения
+			//remove-chars-after-chars, remove repeat
+			regexulator: {
+				//flag: g - multi search; i - ignore case; m - multi lines
+				g: {
+					////после любого из символов удалить повторы
+					//'after-char-remove-repeat': special,
+					////после любого из символов поднять символы
+					//'after-char-upper-char': '\'',//['\'', ''],//'' - начало строки
+					////после любого из символов удаляет символы
+					//'after-chars-remove-chars': {
+					//	'': special
+					//}
+					////после слова удаляет символы
+					//'after-term-remove-chars': {
+					//	'имя': '0123456789'
+					//},
+					////после любого из символов удаляет слово
+					//'after-chars-remove-term': {
+					//	'0123456789': '№'
+					//},
+					////после слова удаляет слова
+					//'after-term-remove-term': {
+					//	'из': 'в',
+					//	'да': 'нет'
+					//},
+					////перед любым из символов удаляет символы
+					////before поддерживает всё тоже что и after
+					//'before-chars-remove-chars': {
+					//	'№': '0123456789'
+					//},
+					////реализует тоже самое что и after-chars-upper-char но для кавычек
+					//'after-char-replace-expr': {
+					//	'"': {
+					//		//регулярное выражение
+					//		expr: '[a-za-яё]',
+					//		//функция замены
+					//		replacer: function(find, c, offset, text, data, noffset) {
+					//			return find[0] + find[1].toLocaleUpperCase();
+					//		}
+					//	}
+					//}
+		
 				}
-			}, options);
-			setLang(config);
-			var key = JSON.stringify(config);
-			var instance = cache[key] || (cache[key] = new LiveInput(config));
-			return instance;
+			}
 		},
-		'fio': function (options) {
+		fio: (function() {
 			var special = ' \'-';
-			var config = mergeConfig({
-				lang: 'ru',
+			return {
+				//lang: 'ru',
 				include: {
 					numbers: false,
 					symbols: false,
@@ -1549,29 +1535,26 @@ var liveinput = new function () {
 				regexulator: {
 					g: {
 						'after-char-remove-repeat': special,
-						'after-char-upper-char': ['\'', ''],//'' - начало строки
+						'after-char-upper-char': ['\'', ''], //'' - начало строки
 						'after-chars-remove-chars': {
 							'': special
 						}
 					}
 				}
-			}, options);
-			return init(config);
+			};
+		})(),
+		numeric: {
+			include: {
+				chars: false,
+				numbers: true,
+				symbols: false,
+				special: ''
+			}
 		},
-		'numeric': function (options) {
-			var config = mergeConfig({
-				include: {
-					chars: false,
-					numbers: true,
-					symbols: false,
-					special: ''
-				}
-			}, options);
-			return init(config);
-		},
-		'address': function (options) {
+		address: (function() {
 			var special = '-/';
-			var config = mergeConfig({
+			return {
+				lang: '',
 				include: {
 					symbols: false,
 					special: special
@@ -1588,38 +1571,78 @@ var liveinput = new function () {
 						}
 					}
 				}
-			}, options);
-			return init(config);
-		},
-		'month': function (options) {
-			var config = mergeConfig({
-				lang: 'ru',
-				interval: 700,
-				include: {
-					numbers: true,
-					symbols: false
-				},
-				input: {
-					capslock: false
-				},
-				regexulator: {
-					g: {
-						'after-char-remove-repeat': '0',
-						'after-char-upper-char': ''
-					}
+			};
+		})(),
+		month: {
+			//lang: 'ru',
+			interval: 700,
+			include: {
+				numbers: true,
+				symbols: false
+			},
+			input: {
+				capslock: false
+			},
+			regexulator: {
+				g: {
+					'after-char-remove-repeat': '0',
+					'after-char-upper-char': ''
 				}
-			}, options);
-			return init(config);
+			}
 		}
 	};
 
+	var configuration = function (config) {
+		mergeConfig(types, config);
+	};
+	configuration.get = function (name) {
+		return helper.copy(types[name]);
+	};
+	configuration.merge = function() {
+		var config = configuration.get('default');
+		for (var i = 0, l = arguments.length; i < l; i++) {
+			if (arguments[i] == 'default') continue;
+			var options = arguments[i];
+			if (typeof options == 'string') {
+				if (!types[options]) {
+					throw new Error('Can not find liveinput type ' + options);
+				}
+				options = types[options];
+			}
+			mergeConfig(config, options);
+		}
+		return config;
+	};
+	configuration.add = function(name, config) {
+		if (types[name]) throw new Error('Can not add exist liveinput type ' + name);
+		types[name] = config;
+	};
+	var init = function (name, options) {
+		if (typeof name == 'object' || typeof name == 'undefined') {
+			options = name;
+			name = 'default';
+		}
+		var config = configuration.merge(name, options);
+		setLang(config);
+		var key = JSON.stringify(config);
+		var instance = cache[key] || (cache[key] = new LiveInput(config));
+		return instance;
+	};
+	var set = function(el, value) {
+		el.value = value;
+		// ReSharper disable once MissingHasOwnPropertyInForeach
+		for (var key in cache) {
+			cache[key].refresh(el);
+		}
+	};
 	return {
 		init: init,
-		configuration: configuration
+		configuration: configuration,
+		set: set
 	};
 };
 
-if (typeof module != "undefined") {
+if (typeof module != 'undefined') {
 	module.exports = liveinput;
 } else if (window) {
 	window.liveinput = liveinput;

@@ -25,21 +25,23 @@
 <body>
 </body>
 <script type="text/javascript">
-	var config = { lang: 'ru' };
-	init('default', 'Default');
-	init('fio', 'FIO', config);
+	liveinput.configuration({
+		'default': { lang: 'ru' }
+	});
+	init('default', 'Default', { lang: '' });
+	init('fio', 'FIO');
 	init('numeric', 'Numeric');
 	//init('place', 'Место рождения/Адрес');
 	//init('peopled-place', 'Место рождения/Адрес - Населенный пункт');
 	init('address', 'Address');
 	var month = function (current, last, lang) {
-		lang = lang || 'en';
+		lang = lang || 'ru';
 		var mouth = parseInt(current, 10);
 		return 1 <= mouth && mouth <= 12 ?
 			new Date(current).toLocaleDateString(lang, { month: 'long' }) :
 			current;
 	}
-	init('month', 'Month', config, month);
+	init('month', 'Month', month);
 	//init('month', 'Месяц - en', {lang: 'en'}, month);
 	//init('passport-issue', 'Тип документа - Паспорт гражданина РФ - Кем выдан');
 	//init('international-passport-issue', 'Тип документа - Заграничный паспорт гражданина РФ - Кем выдан');//, {lang: ''}

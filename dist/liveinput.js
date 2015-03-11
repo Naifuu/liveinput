@@ -744,15 +744,17 @@ var liveinput = new function() {
         var preprocessor = new Preprocessor(config);
         var postprocessor = new Postprocessor(config);
         var heap = {};
+        var callEvent = function(el, name, event) {
+            if (event.old == el.value) return;
+            event.value = el.value;
+            helper.event.call(el, "liveinput", event);
+        };
         var event, eventIndex, eventCount;
         var callevents = function(el, events, name, ptr, arg) {
             if (!events[name]) return;
             event = events[name];
             for (eventIndex = 0, eventCount = event.length; eventIndex < eventCount; eventIndex++) event[eventIndex].apply(ptr, arg);
-            if ("change" != name) return;
-            if (ptr.event.old == el.value) return;
-            ptr.event.value = el.value;
-            helper.event.call(el, "liveinput", ptr.event);
+            if ("change" == name) callEvent(el, "liveinput", ptr.event);
         };
         var onkeyup = function(e, el, data, cursor, events, ptr) {
             cursor.release();
@@ -874,12 +876,8 @@ var liveinput = new function() {
             helper.event.add(el, "blur", ptr.blur);
             el.focus();
         };
-        self.bind = function() {
-            for (var i = 0, l = arguments.length; i < l; i++) bind(arguments[i]);
-            return self;
-        };
-        self.unbind = function(el) {
-            if (!el.GUID || !heap[el.GUID]) return self;
+        var unbind = function(el) {
+            if (!el.GUID || !heap[el.GUID]) return;
             var ptr = heap[el.GUID];
             helper.event.remove(el, "keydown", ptr.keydown);
             helper.event.remove(el, "paste", ptr.paste);
@@ -893,11 +891,20 @@ var liveinput = new function() {
                 events[name].length = 0;
                 delete events[name];
             }
+            var props = helper.getOwnPropertyNames(ptr);
+            for (var prop in props) delete ptr[prop];
             delete heap[el.GUID];
             if (!helper.getOwnPropertyNames(heap).length) {
                 var key = JSON.stringify(config);
                 delete cache[key];
             }
+        };
+        self.bind = function() {
+            for (var i = 0, l = arguments.length; i < l; i++) bind(arguments[i]);
+            return self;
+        };
+        self.unbind = function() {
+            for (var i = 0, l = arguments.length; i < l; i++) unbind(arguments[i]);
             return self;
         };
         self.on = function(event, el, cb) {
@@ -933,54 +940,32 @@ var liveinput = new function() {
         for (var p in b) if ("object" == typeof a[p]) a[p] = mergeConfig(a[p], b[p]); else a[p] = b[p];
         return a;
     };
-    var init = function(name, options) {
-        if ("object" == typeof name || "undefined" == typeof name) {
-            options = name;
-            name = "default";
-        }
-        if (!types[name]) throw new Error("Can not find liveinput type " + name);
-        return types[name](options);
-    };
-    var configuration = function(config) {
-        mergeConfig(types, config);
-        return self;
-    };
-    configuration.get = function(name) {
-        return helper.copy(types[name]);
-    };
     var cache = {};
     var types = {
-        "default": function(options) {
-            var config = mergeConfig({
-                lang: "",
-                interval: 0,
-                layout: true,
-                include: {
-                    chars: true,
-                    numbers: true,
-                    symbols: true,
-                    special: ""
-                },
-                exclude: {
-                    special: "{}[]"
-                },
-                input: {
-                    register: "",
-                    capslock: false
-                },
-                regexulator: {
-                    g: {}
-                }
-            }, options);
-            setLang(config);
-            var key = JSON.stringify(config);
-            var instance = cache[key] || (cache[key] = new LiveInput(config));
-            return instance;
+        "default": {
+            lang: "",
+            interval: 0,
+            layout: true,
+            include: {
+                chars: true,
+                numbers: true,
+                symbols: true,
+                special: ""
+            },
+            exclude: {
+                special: "{}[]"
+            },
+            input: {
+                register: "",
+                capslock: false
+            },
+            regexulator: {
+                g: {}
+            }
         },
-        fio: function(options) {
+        fio: function() {
             var special = " '-";
-            var config = mergeConfig({
-                lang: "ru",
+            return {
                 include: {
                     numbers: false,
                     symbols: false,
@@ -995,23 +980,20 @@ var liveinput = new function() {
                         }
                     }
                 }
-            }, options);
-            return init(config);
+            };
+        }(),
+        numeric: {
+            include: {
+                chars: false,
+                numbers: true,
+                symbols: false,
+                special: ""
+            }
         },
-        numeric: function(options) {
-            var config = mergeConfig({
-                include: {
-                    chars: false,
-                    numbers: true,
-                    symbols: false,
-                    special: ""
-                }
-            }, options);
-            return init(config);
-        },
-        address: function(options) {
+        address: function() {
             var special = "-/";
-            var config = mergeConfig({
+            return {
+                lang: "",
                 include: {
                     symbols: false,
                     special: special
@@ -1028,29 +1010,44 @@ var liveinput = new function() {
                         }
                     }
                 }
-            }, options);
-            return init(config);
-        },
-        month: function(options) {
-            var config = mergeConfig({
-                lang: "ru",
-                interval: 700,
-                include: {
-                    numbers: true,
-                    symbols: false
-                },
-                input: {
-                    capslock: false
-                },
-                regexulator: {
-                    g: {
-                        "after-char-remove-repeat": "0",
-                        "after-char-upper-char": ""
-                    }
+            };
+        }(),
+        month: {
+            interval: 700,
+            include: {
+                numbers: true,
+                symbols: false
+            },
+            input: {
+                capslock: false
+            },
+            regexulator: {
+                g: {
+                    "after-char-remove-repeat": "0",
+                    "after-char-upper-char": ""
                 }
-            }, options);
-            return init(config);
+            }
         }
+    };
+    var configuration = function(config) {
+        mergeConfig(types, config);
+        return self;
+    };
+    configuration.get = function(name) {
+        return helper.copy(types[name]);
+    };
+    configuration.merge = mergeConfig;
+    var init = function(name, options) {
+        if ("object" == typeof name || "undefined" == typeof name) {
+            options = name;
+            name = "default";
+        }
+        if (!types[name]) throw new Error("Can not find liveinput type " + name);
+        var config = mergeConfig(configuration.get(name), options);
+        setLang(config);
+        var key = JSON.stringify(config);
+        var instance = cache[key] || (cache[key] = new LiveInput(config));
+        return instance;
     };
     return {
         init: init,
