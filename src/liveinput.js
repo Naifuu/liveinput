@@ -1081,19 +1081,18 @@ var liveinput = new function() {
 		//processor.config();//log
 		var heap = {};
 
-		var callEvent = function(el, name, event) {
+		var callElementEvent = function(el, name, event) {
 			if (event.old == el.value) return;
 			event.value = el.value;
 			helper.event.call(el, 'liveinput', event);
 		};
 		var event, eventIndex, eventCount;
-		var callevents = function(el, events, name, ptr, arg) {
+		var callLiveinputEvent = function(el, events, name, ptr, arg) {
 			if (!events[name]) return;
 			event = events[name];
 			for (eventIndex = 0, eventCount = event.length; eventIndex < eventCount; eventIndex++) {
 				event[eventIndex].apply(ptr, arg);
-			}
-			if (name == 'change') callEvent(el, 'liveinput', ptr.event);		
+			}	
 		};
 		//window.kb = [];
 		var onkeyup = function(e, el, data, cursor, events, ptr) {
@@ -1156,7 +1155,7 @@ var liveinput = new function() {
 			//	return true;
 			//}
 
-			console.log(e.keyCode, cursor.start, cursor.end);
+			//console.log(e.keyCode, cursor.start, cursor.end);
 
 			data.result = preprocessor.pass({
 				before: helper.textToCodes(data.before),
@@ -1176,7 +1175,8 @@ var liveinput = new function() {
 			data.result.value = postprocessor.pass(data.result.value, data);
 
 			el.value = data.result.value;
-			callevents(el, events, 'change', ptr, [data.result.value, data.old, lang]);
+			callLiveinputEvent(el, events, 'change', ptr, [data.result.value, data.old, lang]);
+			callElementEvent(el, 'liveinput', ptr.event);
 			ptr.event.old = data.old = el.value;
 
 			//data.old = data.result.value;

@@ -1,6 +1,6 @@
 /**
  * liveinput - Input text auto changer
- * @version v1.0.5
+ * @version v1.0.7
  * @link https://github.com/vahpetr/liveinput/
  * @license Apache-2.0
  */
@@ -749,17 +749,16 @@ var liveinput = new function() {
         var preprocessor = new Preprocessor(config);
         var postprocessor = new Postprocessor(config);
         var heap = {};
-        var callEvent = function(el, name, event) {
+        var callElementEvent = function(el, name, event) {
             if (event.old == el.value) return;
             event.value = el.value;
             helper.event.call(el, "liveinput", event);
         };
         var event, eventIndex, eventCount;
-        var callevents = function(el, events, name, ptr, arg) {
+        var callLiveinputEvent = function(el, events, name, ptr, arg) {
             if (!events[name]) return;
             event = events[name];
             for (eventIndex = 0, eventCount = event.length; eventIndex < eventCount; eventIndex++) event[eventIndex].apply(ptr, arg);
-            if ("change" == name) callEvent(el, "liveinput", ptr.event);
         };
         var onkeyup = function(e, el, data, cursor, events, ptr) {
             cursor.release();
@@ -773,7 +772,6 @@ var liveinput = new function() {
                 data.after = el.value.substring(cursor.end);
             }
             if (e.ctrlKey && hotkeymap.control[e.keyCode]) data.diff += hotkeymap.control[e.keyCode];
-            void 0;
             data.result = preprocessor.pass({
                 before: helper.textToCodes(data.before),
                 diff: helper.textToCodes(data.diff),
@@ -783,7 +781,8 @@ var liveinput = new function() {
             data.result.value = data.result.before + data.result.diff + data.result.after;
             data.result.value = postprocessor.pass(data.result.value, data);
             el.value = data.result.value;
-            callevents(el, events, "change", ptr, [ data.result.value, data.old, lang ]);
+            callLiveinputEvent(el, events, "change", ptr, [ data.result.value, data.old, lang ]);
+            callElementEvent(el, "liveinput", ptr.event);
             ptr.event.old = data.old = el.value;
             cursor.move(data.result.offset);
             data.keydown = [];
