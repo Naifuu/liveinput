@@ -196,12 +196,18 @@ var liveinput = new function() {
             });
             self.press();
         };
-        self.refresh = function() {
+        self.selectAll = function() {
             helper.setCaretPosition(el, {
                 start: 0,
                 end: el.value.length
             });
             self.change();
+        };
+        self.restore = function() {
+            helper.setCaretPosition(el, {
+                start: self.start,
+                end: self.end
+            });
         };
         return self;
     };
@@ -784,21 +790,23 @@ var liveinput = new function() {
             callLiveinputEvent(el, events, "change", ptr, [ data.result.value, data.old, lang ]);
             callElementEvent(el, "liveinput", ptr.event);
             ptr.event.old = data.old = el.value;
-            cursor.move(data.result.offset);
+            data.selectAll ? cursor.restore() : cursor.move(data.result.offset);
             data.keydown = [];
             ptr.timer = null;
+            data.selectAll = false;
             return true;
         };
         var refresh = function(el) {
             if (!el.value.length) return;
             var ptr = heap[el.GUID];
             clearTimeout(ptr.timer);
-            if (!ptr.timer) ptr.cursor.refresh();
+            if (!ptr.timer) ptr.cursor.selectAll();
             onkeyup({
                 keyCode: whitelist[0]
             }, el, ptr.data, ptr.cursor, ptr.events, ptr);
         };
         var onkeydown = function(e, el, data, cursor, events, ptr) {
+            data.selectAll = false;
             if (e.ctrlKey) switch (e.keyCode) {
               case 90:
               case 67:
@@ -807,6 +815,10 @@ var liveinput = new function() {
               case 89:
                 helper.preventDefault(e);
                 return false;
+
+              case 65:
+                cursor.selectAll();
+                data.selectAll = true;
             }
             if (data.mousedown) {
                 helper.preventDefault(e);
@@ -822,7 +834,7 @@ var liveinput = new function() {
                 shiftKey: e.shiftKey,
                 ctrlKey: e.ctrlKey
             });
-            if (!ptr.timer) cursor.press();
+            if (!ptr.timer && !data.selectAll) cursor.press();
             ptr.timer = setTimeout(function() {
                 onkeyup(data.keydown[data.keydown.length - 1], el, data, cursor, events, ptr);
             }, interval);
@@ -953,7 +965,7 @@ var liveinput = new function() {
     var types = {
         "default": {
             lang: "",
-            interval: 0,
+            interval: 700,
             layout: true,
             include: {
                 chars: true,

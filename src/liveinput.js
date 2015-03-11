@@ -264,6 +264,10 @@ var liveinput = new function() {
 
 			//self.start = data.start - offset;
 			//self.end = self.start;
+			//if (self.start != self.end) return helper.setCaretPosition(el, {
+			//	start: self.start,
+			//	end: self.end
+			//});
 
 			maxpos = max(self.start - offset, self.end - offset);
 			//console.log('move', maxpos);
@@ -273,18 +277,19 @@ var liveinput = new function() {
 			});
 			self.press();
 		};
-		self.refresh = function() {
+		self.selectAll = function() {
 			helper.setCaretPosition(el, {
 				start: 0,
 				end: el.value.length
 			});
-			//self.press();
-			//self.release();
 			self.change();
-			//self.move(-el.value.length);
-			//console.log('cursor refresh', self.start, self.end);
-			//self.release();
-		}
+		};
+		self.restore = function() {
+			helper.setCaretPosition(el, {
+				start: self.start,
+				end: self.end
+			});
+		};
 		//self.get = function() {
 		//	return data;
 		//};
@@ -1183,13 +1188,15 @@ var liveinput = new function() {
 			//var copy = JSON.parse(JSON.stringify(data));//log
 			//console.log(JSON.parse(JSON.stringify(data)));//log
 
-			cursor.move(data.result.offset);
+			data.selectAll ? cursor.restore() : cursor.move(data.result.offset);
+
 			//cursor.release();
 
 			data.keydown = [];
 			//data.hotkey = false;
 			//delete ptr.timer;
 			ptr.timer = null;
+			data.selectAll = false;
 
 			return true;
 		};
@@ -1200,7 +1207,7 @@ var liveinput = new function() {
 			clearTimeout(ptr.timer);
 			//ptr.cursor.save();
 			if (!ptr.timer) {
-				ptr.cursor.refresh();
+				ptr.cursor.selectAll();
 			}
 			onkeyup({
 				keyCode: whitelist[0]
@@ -1216,6 +1223,9 @@ var liveinput = new function() {
 			//	e.preventDefault();
 			//	return false;
 			//}
+
+			data.selectAll = false;
+			
 			if (e.ctrlKey) {
 				switch (e.keyCode) {
 				case 90: //Control+Z
@@ -1225,6 +1235,9 @@ var liveinput = new function() {
 				case 89: //Control+Y
 					helper.preventDefault(e);
 					return false;
+				case 65: //Control+A
+					cursor.selectAll();
+					data.selectAll = true;
 				default:
 					break;
 				}
@@ -1262,7 +1275,7 @@ var liveinput = new function() {
 
 			//console.log('push', data.keydown[data.keydown.length-1]);
 
-			if (!ptr.timer) {
+			if (!ptr.timer && !data.selectAll) {
 				cursor.press();
 			}
 
@@ -1451,7 +1464,7 @@ var liveinput = new function() {
 		'default': {
 			//язык ru/en
 			lang: '',
-			interval: 0, //1,
+			interval: 700, //1,
 			//отвечает за перевод одного языка в другой
 			layout: true,
 			//отвечает за разрешённые символы
