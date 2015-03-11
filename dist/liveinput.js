@@ -209,7 +209,7 @@ var liveinput = new function() {
     var whitelist = [ 192, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 65, 83, 68, 70, 71, 72, 74, 75, 76, 186, 222, 220, 226, 90, 88, 67, 86, 66, 78, 77, 188, 190, 191, 111, 106, 109, 107, 12 ];
     var additional = {
         keyCodes: [ 32, 13, 8 ],
-        charCodes: [ 32, 10 ]
+        charCodes: [ 32, 10, 8 ]
     };
     whitelist.push.apply(whitelist, additional.keyCodes);
     var hotkeymap = {
@@ -692,6 +692,11 @@ var liveinput = new function() {
         l = processes.length;
         self.pass = function(compute, data) {
             result = compute;
+            for (i = 0, j = data.keydown.length; i < j; i++) {
+                if (8 != data.keydown[i].keyCode) continue;
+                data.keydown.splice(i, 1);
+                result.diff.splice(i, 1);
+            }
             for (i = 0; i < l; i++) result = processes[i].exec(result, data);
             result.before = helper.codesToText(result.before);
             result.diff = helper.codesToText(result.diff);
@@ -768,11 +773,12 @@ var liveinput = new function() {
                 data.after = el.value.substring(cursor.end);
             }
             if (e.ctrlKey && hotkeymap.control[e.keyCode]) data.diff += hotkeymap.control[e.keyCode];
+            void 0;
             data.result = preprocessor.pass({
                 before: helper.textToCodes(data.before),
                 diff: helper.textToCodes(data.diff),
                 after: helper.textToCodes(data.after),
-                offset: e.ctrlKey && -data.diff.length || 8 == e.keyCode ? 1 : 0
+                offset: e.ctrlKey ? -data.diff.length : 8 == e.keyCode && cursor.start == cursor.end + 1 ? 1 : 0
             }, data);
             data.result.value = data.result.before + data.result.diff + data.result.after;
             data.result.value = postprocessor.pass(data.result.value, data);
@@ -874,7 +880,7 @@ var liveinput = new function() {
             helper.event.add(el, "mouseleave", ptr.mouseleave);
             helper.event.add(el, "dragover", ptr.dragover);
             helper.event.add(el, "blur", ptr.blur);
-            el.focus();
+            refresh(el);
         };
         var unbind = function(el) {
             if (!el.GUID || !heap[el.GUID]) return;
@@ -923,6 +929,10 @@ var liveinput = new function() {
             if (eventIndex == -1) return self;
             heap[el.GUID].events[event].splice(eventIndex, 1);
             return self;
+        };
+        self.refresh = function(el) {
+            if (!heap[el.GUID]) return;
+            refresh(el);
         };
         return self;
     };
@@ -1031,27 +1041,46 @@ var liveinput = new function() {
     };
     var configuration = function(config) {
         mergeConfig(types, config);
-        return self;
     };
     configuration.get = function(name) {
         return helper.copy(types[name]);
     };
-    configuration.merge = mergeConfig;
+    configuration.merge = function() {
+        var config = configuration.get("default");
+        for (var i = 0, l = arguments.length; i < l; i++) {
+            if ("default" == arguments[i]) continue;
+            var options = arguments[i];
+            if ("string" == typeof options) {
+                if (!types[options]) throw new Error("Can not find liveinput type " + options);
+                options = types[options];
+            }
+            mergeConfig(config, options);
+        }
+        return config;
+    };
+    configuration.add = function(name, config) {
+        if (types[name]) throw new Error("Can not add exist liveinput type " + name);
+        types[name] = config;
+    };
     var init = function(name, options) {
         if ("object" == typeof name || "undefined" == typeof name) {
             options = name;
             name = "default";
         }
-        if (!types[name]) throw new Error("Can not find liveinput type " + name);
-        var config = mergeConfig(configuration.get(name), options);
+        var config = configuration.merge(name, options);
         setLang(config);
         var key = JSON.stringify(config);
         var instance = cache[key] || (cache[key] = new LiveInput(config));
         return instance;
     };
+    var set = function(el, value) {
+        el.value = value;
+        for (var key in cache) cache[key].refresh(el);
+    };
     return {
         init: init,
-        configuration: configuration
+        configuration: configuration,
+        set: set
     };
 }();
 
