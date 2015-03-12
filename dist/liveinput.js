@@ -1,6 +1,6 @@
 /**
  * liveinput - Input text auto changer
- * @version v1.0.7
+ * @version v1.0.8
  * @link https://github.com/vahpetr/liveinput/
  * @license Apache-2.0
  */
@@ -175,9 +175,13 @@ var liveinput = new function() {
     var Cursor = function(el) {
         var self = this;
         var max = Math.max;
+        var min = Math.min;
         self.start = 0;
         self.end = 0;
+        self.range = false;
+        self.moveBack = false;
         self.press = function() {
+            if (self.range) return;
             self.end = self.start = helper.getSelectionStart(el);
         };
         self.release = function() {
@@ -187,14 +191,20 @@ var liveinput = new function() {
             self.start = helper.getSelectionStart(el);
             self.end = helper.getSelectionEnd(el);
         };
-        var maxpos;
+        var movepos;
         self.move = function(offset) {
-            maxpos = max(self.start - offset, self.end - offset);
+            if (self.range) {
+                self.restore();
+                self.range = false;
+                return;
+            }
+            movepos = (self.moveBack ? min : max)(self.start - offset, self.end - offset);
             helper.setCaretPosition(el, {
-                start: maxpos,
-                end: maxpos
+                start: movepos,
+                end: movepos
             });
             self.press();
+            self.moveBack = false;
         };
         self.selectAll = function() {
             helper.setCaretPosition(el, {
@@ -699,7 +709,7 @@ var liveinput = new function() {
         self.pass = function(compute, data) {
             result = compute;
             for (i = 0, j = data.keydown.length; i < j; i++) {
-                if (8 != data.keydown[i].keyCode) continue;
+                if (!data.keydown[i] || 8 != data.keydown[i].keyCode) continue;
                 data.keydown.splice(i, 1);
                 result.diff.splice(i, 1);
             }
@@ -790,10 +800,9 @@ var liveinput = new function() {
             callLiveinputEvent(el, events, "change", ptr, [ data.result.value, data.old, lang ]);
             callElementEvent(el, "liveinput", ptr.event);
             ptr.event.old = data.old = el.value;
-            data.selectAll ? cursor.restore() : cursor.move(data.result.offset);
+            cursor.move(data.result.offset);
             data.keydown = [];
             ptr.timer = null;
-            data.selectAll = false;
             return true;
         };
         var refresh = function(el) {
@@ -802,11 +811,10 @@ var liveinput = new function() {
             clearTimeout(ptr.timer);
             if (!ptr.timer) ptr.cursor.selectAll();
             onkeyup({
-                keyCode: whitelist[0]
+                keyCode: 0
             }, el, ptr.data, ptr.cursor, ptr.events, ptr);
         };
         var onkeydown = function(e, el, data, cursor, events, ptr) {
-            data.selectAll = false;
             if (e.ctrlKey) switch (e.keyCode) {
               case 90:
               case 67:
@@ -818,7 +826,11 @@ var liveinput = new function() {
 
               case 65:
                 cursor.selectAll();
-                data.selectAll = true;
+                cursor.range = true;
+                break;
+
+              case 8:
+                cursor.moveBack = true;
             }
             if (data.mousedown) {
                 helper.preventDefault(e);
@@ -834,7 +846,7 @@ var liveinput = new function() {
                 shiftKey: e.shiftKey,
                 ctrlKey: e.ctrlKey
             });
-            if (!ptr.timer && !data.selectAll) cursor.press();
+            if (!ptr.timer) cursor.press();
             ptr.timer = setTimeout(function() {
                 onkeyup(data.keydown[data.keydown.length - 1], el, data, cursor, events, ptr);
             }, interval);
@@ -884,6 +896,7 @@ var liveinput = new function() {
             ptr.blur = function() {
                 refresh(el);
             };
+            window.ptr = ptr;
             helper.event.add(el, "keydown", ptr.keydown);
             helper.event.add(el, "paste", ptr.paste);
             helper.event.add(el, "mousedown", ptr.mousedown);
@@ -965,7 +978,7 @@ var liveinput = new function() {
     var types = {
         "default": {
             lang: "",
-            interval: 700,
+            interval: 1e3 / 24,
             layout: true,
             include: {
                 chars: true,

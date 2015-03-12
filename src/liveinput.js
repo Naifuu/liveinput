@@ -219,18 +219,21 @@ var liveinput = new function() {
 	// ReSharper disable once InconsistentNaming
 	var Cursor = function(el) {
 		var self = this;
-
+	
 		var max = Math.max;
-		//var min = Math.min;
+		var min = Math.min;
 
 		//var data = {};
 
 		self.start = 0;
 		self.end = 0;
+		self.range = false;
+		self.moveBack = false;
 
 		//var marker = {};
 
-		self.press = function() {
+		self.press = function () {
+			if (self.range) return;
 			self.end = self.start = helper.getSelectionStart(el);
 			//console.log('press', self.start);
 			//data.start = helper.getSelectionStart(el);
@@ -259,9 +262,13 @@ var liveinput = new function() {
 		//self.load = function() {
 		//	helper.setCaretPosition(el, marker);
 		//};
-		var maxpos;
+		var movepos;
 		self.move = function(offset) {
-
+			if (self.range) {
+				self.restore();
+				self.range = false;
+				return;
+			}
 			//self.start = data.start - offset;
 			//self.end = self.start;
 			//if (self.start != self.end) return helper.setCaretPosition(el, {
@@ -269,13 +276,20 @@ var liveinput = new function() {
 			//	end: self.end
 			//});
 
-			maxpos = max(self.start - offset, self.end - offset);
-			//console.log('move', maxpos);
+			movepos = (self.moveBack ? min : max)(self.start - offset, self.end - offset);
+			
+			
+			//console.log('move', movepos);
 			helper.setCaretPosition(el, {
-				start: maxpos,
-				end: maxpos
+				start: movepos,
+				end: movepos
 			});
+			
 			self.press();
+
+			self.moveBack = false;
+			
+			// ReSharper disable once NotAllPathsReturnValue
 		};
 		self.selectAll = function() {
 			helper.setCaretPosition(el, {
@@ -290,6 +304,7 @@ var liveinput = new function() {
 				end: self.end
 			});
 		};
+		
 		//self.get = function() {
 		//	return data;
 		//};
@@ -1009,7 +1024,7 @@ var liveinput = new function() {
 			result = compute;
 			//TODO remove noop
 			for (i = 0, j = data.keydown.length; i < j; i++) {
-				if (data.keydown[i].keyCode != 8) continue;//backspace
+				if (!data.keydown[i] || data.keydown[i].keyCode != 8) continue;//backspace
 				//debugger
 				data.keydown.splice(i, 1);
 				result.diff.splice(i, 1);
@@ -1103,7 +1118,7 @@ var liveinput = new function() {
 		var onkeyup = function(e, el, data, cursor, events, ptr) {
 
 			//if (data.old == el.value) return;
-			//console.log('onkeyup', e.keyCode);
+			//console.log('onkeyup', e);
 
 			//if (whitelist.indexOf(e.keyCode) == -1) return true;
 
@@ -1188,7 +1203,8 @@ var liveinput = new function() {
 			//var copy = JSON.parse(JSON.stringify(data));//log
 			//console.log(JSON.parse(JSON.stringify(data)));//log
 
-			data.selectAll ? cursor.restore() : cursor.move(data.result.offset);
+			//cursor.range ? cursor.restore() :
+			cursor.move(data.result.offset);
 
 			//cursor.release();
 
@@ -1196,7 +1212,7 @@ var liveinput = new function() {
 			//data.hotkey = false;
 			//delete ptr.timer;
 			ptr.timer = null;
-			data.selectAll = false;
+			//cursor.range = false;
 
 			return true;
 		};
@@ -1210,13 +1226,13 @@ var liveinput = new function() {
 				ptr.cursor.selectAll();
 			}
 			onkeyup({
-				keyCode: whitelist[0]
+				keyCode: 0
 			}, el, ptr.data, ptr.cursor, ptr.events, ptr);
 			//ptr.cursor.load();
 		}
 
 		var onkeydown = function(e, el, data, cursor, events, ptr) {
-			//console.log(e.keyCode);
+			//console.log('onkeydown',e);
 			//data.copypast = false;
 
 			//if (e.ctrlKey && !hotkey.control[e.keyCode]) {
@@ -1224,7 +1240,7 @@ var liveinput = new function() {
 			//	return false;
 			//}
 
-			data.selectAll = false;
+			//cursor.range = false;
 			
 			if (e.ctrlKey) {
 				switch (e.keyCode) {
@@ -1237,7 +1253,11 @@ var liveinput = new function() {
 					return false;
 				case 65: //Control+A
 					cursor.selectAll();
-					data.selectAll = true;
+					cursor.range = true;
+					break;
+				case 8: //Control+backspace
+					cursor.moveBack = true;
+					break
 				default:
 					break;
 				}
@@ -1275,7 +1295,7 @@ var liveinput = new function() {
 
 			//console.log('push', data.keydown[data.keydown.length-1]);
 
-			if (!ptr.timer && !data.selectAll) {
+			if (!ptr.timer) {//!cursor.range
 				cursor.press();
 			}
 
@@ -1343,7 +1363,7 @@ var liveinput = new function() {
 				//console.log('blur');
 				refresh(el);
 			}
-
+			window.ptr = ptr;
 			helper.event.add(el, 'keydown', ptr.keydown);
 			helper.event.add(el, 'paste', ptr.paste);
 			helper.event.add(el, 'mousedown', ptr.mousedown);
@@ -1464,7 +1484,7 @@ var liveinput = new function() {
 		'default': {
 			//язык ru/en
 			lang: '',
-			interval: 700, //1,
+			interval: 1000/24, //1,
 			//отвечает за перевод одного языка в другой
 			layout: true,
 			//отвечает за разрешённые символы
