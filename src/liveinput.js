@@ -355,7 +355,7 @@ var liveinput = new function() {
 	//var blacklist = [27, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 104, 145, 19, 144, 9, 20, 16, 17, 91, 18, 92, 93, 45, 36, 33, 46, 35, 34, 37, 38, 39, 40];//, 8
 	var additional = {
 		//space(32,32)/enter(13,10)/backspace(8)
-		keyCodes: [32, 13, 8], //, 8
+		keyCodes: [32, 13], //, 8
 		charCodes: [32, 10, 8]
 	}
 	//char 10, 13 keyCode
@@ -372,10 +372,49 @@ var liveinput = new function() {
 			//56: '*',
 			// ReSharper disable once StringLiteralWrongQuotes
 			222: "'"
+		},
+		//ё	"	№	;	:	?	х	ъ	ж	э	/	б	ю	,	/
+		//~	@	#	$	^	&	{	}	:	"	|	<	>	?	|
+		shift: {
+			ru: {
+				192: 'ё',
+				50: '"',
+				51: '№',
+				52: ';',
+				54: ':',
+				55: '?',
+				219: 'х',
+				221: 'ъ',
+				186: 'ж',
+				222: 'э',
+				220: '/',
+				188: 'б',
+				190: 'ю',
+				191: ',',
+				226: '/'
+			},
+			en: {
+				192: '~',
+				50: '@',
+				51: '#',
+				52: '$',
+				54: '^',
+				55: '&',
+				//TODO не поддерживаются
+				//219: '{',
+				//221: '}',
+				186: ':',
+				222: '"',
+				220: '|',
+				188: '<',
+				190: '>',
+				191: '?',
+				226: '|'
+			}
 		}
 	};
 	var parseCode = function(code) {
-		return parseInt(code, 10);
+		return Number(code); //parseInt(code, 10);
 	}
 	var keymapper = function(map) {
 		//console.log('keymapper', map);
@@ -383,8 +422,13 @@ var liveinput = new function() {
 		//console.log('keymapper', props);
 		return helper.map(props, parseCode);
 	}
+	//TODO может искать без этого, сразу в hotkeymap
 	var hotkey = {
-		control: keymapper(hotkeymap.control)
+		control: keymapper(hotkeymap.control),
+		shift: {
+			ru: keymapper(hotkeymap.shift.ru),
+			en: keymapper(hotkeymap.shift.en)
+		}
 	};
 
 	//TODO разделить на комманды препроцессора и постпроцессорв
@@ -1163,12 +1207,22 @@ var liveinput = new function() {
 				data.after = el.value.substring(cursor.end);
 			}
 
+			data.result.offset = e.ctrlKey ? -data.diff.length : e.keyCode == 8 && cursor.start == cursor.end + 1 ? 1 : 0;
 
 			if (e.ctrlKey && hotkeymap.control[e.keyCode]) {
 				data.diff += hotkeymap.control[e.keyCode];
+				data.result.offset--;
 				//data.result.offset -= hotkeymap.control[e.keyCode].length;
 				//data.hotkey = true;
 			}
+			
+			if (e.shiftKey) {
+				if (hotkeymap.shift[lang] && hotkeymap.shift[lang][e.keyCode]) {
+					data.diff += hotkeymap.shift[lang][e.keyCode];
+					data.result.offset--;
+				}
+			}
+			
 			//if (data.old == el.value) {
 			//	data.keydown = [];
 			//	ptr.timer = null;
@@ -1181,7 +1235,7 @@ var liveinput = new function() {
 				before: helper.textToCodes(data.before),
 				diff: helper.textToCodes(data.diff),
 				after: helper.textToCodes(data.after),
-				offset: e.ctrlKey ? -data.diff.length : e.keyCode == 8 && cursor.start == cursor.end + 1 ? 1 : 0
+				offset: data.result.offset
 			}, data);
 
 			//var press = {
@@ -1218,7 +1272,7 @@ var liveinput = new function() {
 		};
 
 		var refresh = function(el) {
-			if (!el.value.length) return;
+			if (!el.value.length || !config.refresh) return;
 			var ptr = heap[el.GUID];
 			clearTimeout(ptr.timer);
 			//ptr.cursor.save();
@@ -1257,7 +1311,7 @@ var liveinput = new function() {
 					break;
 				case 8: //Control+backspace
 					cursor.moveBack = true;
-					break
+					break;
 				default:
 					break;
 				}
@@ -1265,9 +1319,7 @@ var liveinput = new function() {
 
 			//switch (e.keyCode) {
 			//	case 8: //backspace
-			//		debugger
-			//		callevents(el, events, 'change', ptr, [el.value, data.old, lang]);
-			//		ptr.event.old = data.old = el.value;
+			//		//refresh(el);
 			//		return false;
 			//	default:
 			//		break;
@@ -1303,9 +1355,19 @@ var liveinput = new function() {
 				onkeyup(data.keydown[data.keydown.length - 1], el, data, cursor, events, ptr);
 			}, interval);
 
-			if (e.ctrlKey && helper.indexOf(hotkey.control, e.keyCode) != -1) {
-				helper.preventDefault(e);
-				return false;
+			if (e.ctrlKey) {
+				if (helper.indexOf(hotkey.control, e.keyCode) != -1) {
+					helper.preventDefault(e);
+					return false;
+				}
+			}
+
+			if (e.shiftKey) {
+				//debugger
+				if (hotkey.shift[lang] && helper.indexOf(hotkey.shift[lang], e.keyCode) != -1) {
+					helper.preventDefault(e);
+					return false;
+				}
 			}
 
 			return true;
@@ -1333,36 +1395,36 @@ var liveinput = new function() {
 			var cursor = ptr.data.cursor = ptr.cursor;
 			var events = ptr.events = {};
 			ptr.keydown = function(e) {
-				//console.log('keydown', e.keyCode);
+				console.log('keydown', e.keyCode);
 				onkeydown(e, el, data, cursor, events, ptr);
 			};
 			ptr.paste = function(e) {
-				//console.log('paste');
+				console.log('paste');
 				data.keydown = [];
 				return true;
 			};
 			ptr.dragover = function(e) {
-				//console.log('dragover');
+				console.log('dragover');
 				helper.preventDefault(e);
 				return false;
-			}
+			};
 			ptr.mousedown = function() {
-				//console.log('onmousedown');
+				console.log('onmousedown');
 				ptr.data.mousedown = true;
 				refresh(el);
-			}
+			};
 			ptr.mouseup = function() {
-				//console.log('onmouseup');
+				console.log('onmouseup');
 				ptr.data.mousedown = false;
-			}
+			};
 			ptr.mouseleave = function() {
-				//console.log('onmouseleave');
+				console.log('onmouseleave');
 				ptr.data.mousedown = false;
-			}
+			};
 			ptr.blur = function() {
-				//console.log('blur');
+				console.log('blur');
 				refresh(el);
-			}
+			};
 			window.ptr = ptr;
 			helper.event.add(el, 'keydown', ptr.keydown);
 			helper.event.add(el, 'paste', ptr.paste);
@@ -1484,7 +1546,10 @@ var liveinput = new function() {
 		'default': {
 			//язык ru/en
 			lang: '',
-			interval: 1000/24, //1,
+			//интервал обновления
+			interval: 1000 / 24, //1,
+			//отключает полную проверку поля при биндинге потере фиокуса и ещё некоторых случаях
+			refresh: true,
 			//отвечает за перевод одного языка в другой
 			layout: true,
 			//отвечает за разрешённые символы

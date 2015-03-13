@@ -224,7 +224,7 @@ var liveinput = new function() {
     var langs = [ "ru", "en" ];
     var whitelist = [ 192, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 65, 83, 68, 70, 71, 72, 74, 75, 76, 186, 222, 220, 226, 90, 88, 67, 86, 66, 78, 77, 188, 190, 191, 111, 106, 109, 107, 12 ];
     var additional = {
-        keyCodes: [ 32, 13, 8 ],
+        keyCodes: [ 32, 13 ],
         charCodes: [ 32, 10, 8 ]
     };
     whitelist.push.apply(whitelist, additional.keyCodes);
@@ -237,17 +237,55 @@ var liveinput = new function() {
             54: "^",
             55: "&",
             222: "'"
+        },
+        shift: {
+            ru: {
+                192: "ё",
+                50: '"',
+                51: "№",
+                52: ";",
+                54: ":",
+                55: "?",
+                219: "х",
+                221: "ъ",
+                186: "ж",
+                222: "э",
+                220: "/",
+                188: "б",
+                190: "ю",
+                191: ",",
+                226: "/"
+            },
+            en: {
+                192: "~",
+                50: "@",
+                51: "#",
+                52: "$",
+                54: "^",
+                55: "&",
+                186: ":",
+                222: '"',
+                220: "|",
+                188: "<",
+                190: ">",
+                191: "?",
+                226: "|"
+            }
         }
     };
     var parseCode = function(code) {
-        return parseInt(code, 10);
+        return Number(code);
     };
     var keymapper = function(map) {
         var props = helper.getOwnPropertyNames(map);
         return helper.map(props, parseCode);
     };
     var hotkey = {
-        control: keymapper(hotkeymap.control)
+        control: keymapper(hotkeymap.control),
+        shift: {
+            ru: keymapper(hotkeymap.shift.ru),
+            en: keymapper(hotkeymap.shift.en)
+        }
     };
     var command = {};
     command.layout = function(config, type) {
@@ -787,12 +825,20 @@ var liveinput = new function() {
                 data.diff = el.value.substring(cursor.start, cursor.end);
                 data.after = el.value.substring(cursor.end);
             }
-            if (e.ctrlKey && hotkeymap.control[e.keyCode]) data.diff += hotkeymap.control[e.keyCode];
+            data.result.offset = e.ctrlKey ? -data.diff.length : 8 == e.keyCode && cursor.start == cursor.end + 1 ? 1 : 0;
+            if (e.ctrlKey && hotkeymap.control[e.keyCode]) {
+                data.diff += hotkeymap.control[e.keyCode];
+                data.result.offset--;
+            }
+            if (e.shiftKey) if (hotkeymap.shift[lang] && hotkeymap.shift[lang][e.keyCode]) {
+                data.diff += hotkeymap.shift[lang][e.keyCode];
+                data.result.offset--;
+            }
             data.result = preprocessor.pass({
                 before: helper.textToCodes(data.before),
                 diff: helper.textToCodes(data.diff),
                 after: helper.textToCodes(data.after),
-                offset: e.ctrlKey ? -data.diff.length : 8 == e.keyCode && cursor.start == cursor.end + 1 ? 1 : 0
+                offset: data.result.offset
             }, data);
             data.result.value = data.result.before + data.result.diff + data.result.after;
             data.result.value = postprocessor.pass(data.result.value, data);
@@ -806,7 +852,7 @@ var liveinput = new function() {
             return true;
         };
         var refresh = function(el) {
-            if (!el.value.length) return;
+            if (!el.value.length || !config.refresh) return;
             var ptr = heap[el.GUID];
             clearTimeout(ptr.timer);
             if (!ptr.timer) ptr.cursor.selectAll();
@@ -850,7 +896,11 @@ var liveinput = new function() {
             ptr.timer = setTimeout(function() {
                 onkeyup(data.keydown[data.keydown.length - 1], el, data, cursor, events, ptr);
             }, interval);
-            if (e.ctrlKey && helper.indexOf(hotkey.control, e.keyCode) != -1) {
+            if (e.ctrlKey) if (helper.indexOf(hotkey.control, e.keyCode) != -1) {
+                helper.preventDefault(e);
+                return false;
+            }
+            if (e.shiftKey) if (hotkey.shift[lang] && helper.indexOf(hotkey.shift[lang], e.keyCode) != -1) {
                 helper.preventDefault(e);
                 return false;
             }
@@ -873,27 +923,34 @@ var liveinput = new function() {
             var cursor = ptr.data.cursor = ptr.cursor;
             var events = ptr.events = {};
             ptr.keydown = function(e) {
+                void 0;
                 onkeydown(e, el, data, cursor, events, ptr);
             };
             ptr.paste = function() {
+                void 0;
                 data.keydown = [];
                 return true;
             };
             ptr.dragover = function(e) {
+                void 0;
                 helper.preventDefault(e);
                 return false;
             };
             ptr.mousedown = function() {
+                void 0;
                 ptr.data.mousedown = true;
                 refresh(el);
             };
             ptr.mouseup = function() {
+                void 0;
                 ptr.data.mousedown = false;
             };
             ptr.mouseleave = function() {
+                void 0;
                 ptr.data.mousedown = false;
             };
             ptr.blur = function() {
+                void 0;
                 refresh(el);
             };
             window.ptr = ptr;
@@ -979,6 +1036,7 @@ var liveinput = new function() {
         "default": {
             lang: "",
             interval: 1e3 / 24,
+            refresh: true,
             layout: true,
             include: {
                 chars: true,
